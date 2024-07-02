@@ -1,0 +1,429 @@
+time: 20240626_161934 
+using 100 images for train  
+
+config:  
+{
+    "name": "FusionDiff",
+    "hyperParameter": {
+        "epochs": 100000,
+        "start_epoch": 0,
+        "loss_step": 2,
+        "save_model_epoch_step": 5000
+    },
+    "dataset": {
+        "train": {
+            "path": "C:/Users/10528/Desktop/FusionDiff/Dataset/Multi-Focus-Images/train/NYU-D-100",
+            "phase": "train",
+            "batch_size": 8,
+            "shuffle": true,
+            "drop_last": true,
+            "use_dataTransform": true,
+            "resize": true,
+            "imgSize": 256
+        },
+        "valid": {
+            "dataset_name": "MFFW",
+            "path": "C:/Users/10528/Desktop/FusionDiff/Dataset/Multi-Focus-Images/valid/MFFW",
+            "phase": "valid",
+            "batch_size": 1,
+            "shuffle": false,
+            "drop_last": false,
+            "use_dataTransform": true,
+            "resize": false,
+            "imgSize": -1,
+            "generat_imgs_num": 1
+        }
+    },
+    "diffusion_model": {
+        "T": 2000,
+        "beta_schedule_type": "cosine",
+        "add_noise": false,
+        "loss_scale": 128
+    },
+    "Condition_Noise_Predictor": {
+        "use_preTrain_model": false,
+        "preTrain_Model_path": "",
+        "concat_type": "ABX",
+        "UNet": {
+            "in_channels": 3,
+            "out_channels": 3,
+            "model_channels": 32,
+            "num_res_blocks": 2,
+            "dropout": 0.1,
+            "time_embed_dim_mult": 4,
+            "down_sample_mult": [
+                1,
+                2,
+                4,
+                8
+            ]
+        }
+    },
+    "optimizer": {
+        "init_lr": 0.0002,
+        "use_lr_scheduler": true,
+        "StepLR_size": 1000,
+        "StepLR_gamma": 0.99
+    }
+}
+ learningRate_scheduler = lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.99)  
+
+ [epoch] 0/100000    [epoch_step] 0/12     [train_step] 0     [loss] 1.119915     [scale_loss] 143.349152     [lr] 0.000200     [t] [ 101  758 1445  622 1801  844 1888 1519]
+ [epoch] 0/100000    [epoch_step] 2/12     [train_step] 2     [loss] 1.078270     [scale_loss] 138.018585     [lr] 0.000200     [t] [  45  631  578  930 1898 1226    5 1069]
+ [epoch] 0/100000    [epoch_step] 4/12     [train_step] 4     [loss] 1.057352     [scale_loss] 135.341064     [lr] 0.000200     [t] [ 268 1567 1943 1010 1640 1681  591  696]
+ [epoch] 0/100000    [epoch_step] 6/12     [train_step] 6     [loss] 1.037488     [scale_loss] 132.798401     [lr] 0.000200     [t] [1276 1114  482 1595  221 1623  363 1999]
+ [epoch] 0/100000    [epoch_step] 8/12     [train_step] 8     [loss] 1.023515     [scale_loss] 131.009857     [lr] 0.000200     [t] [ 241 1105 1461 1395 1382  236   69 1011]
+ [epoch] 0/100000    [epoch_step] 10/12     [train_step] 10     [loss] 1.015443     [scale_loss] 129.976685     [lr] 0.000200     [t] [ 552 1527 1463  435 1495 1199  895  351]
+
+ [epoch] 1/100000    [epoch_step] 0/12     [train_step] 12     [loss] 1.011440     [scale_loss] 129.464264     [lr] 0.000200     [t] [ 971 1718  385 1069  555 1193  631 1659]
+ [epoch] 1/100000    [epoch_step] 2/12     [train_step] 14     [loss] 1.010747     [scale_loss] 129.375671     [lr] 0.000200     [t] [1551 1542  100 1018 1884 1082 1993   46]
+ [epoch] 1/100000    [epoch_step] 4/12     [train_step] 16     [loss] 1.008417     [scale_loss] 129.077332     [lr] 0.000200     [t] [ 815 1254 1123  414 1477 1903 1105 1117]
+ [epoch] 1/100000    [epoch_step] 6/12     [train_step] 18     [loss] 1.005214     [scale_loss] 128.667419     [lr] 0.000200     [t] [ 272  777 1102  824 1314  638  806   78]
+ [epoch] 1/100000    [epoch_step] 8/12     [train_step] 20     [loss] 1.004978     [scale_loss] 128.637207     [lr] 0.000200     [t] [1043 1444  305   78 1801  433 1358 1828]
+ [epoch] 1/100000    [epoch_step] 10/12     [train_step] 22     [loss] 1.004521     [scale_loss] 128.578659     [lr] 0.000200     [t] [1692  156  923 1394 1412  452 1849  482]
+
+ [epoch] 2/100000    [epoch_step] 0/12     [train_step] 24     [loss] 1.005861     [scale_loss] 128.750244     [lr] 0.000200     [t] [1798  575 1754  160 1209 1665 1841  950]
+ [epoch] 2/100000    [epoch_step] 2/12     [train_step] 26     [loss] 1.004540     [scale_loss] 128.581177     [lr] 0.000200     [t] [1668 1758 1119  844    9  610 1233 1421]
+ [epoch] 2/100000    [epoch_step] 4/12     [train_step] 28     [loss] 1.000640     [scale_loss] 128.081924     [lr] 0.000200     [t] [1262 1486  240  602 1599  636 1409 1220]
+ [epoch] 2/100000    [epoch_step] 6/12     [train_step] 30     [loss] 1.002901     [scale_loss] 128.371353     [lr] 0.000200     [t] [1094  836  948  338 1534 1738   57  982]
+ [epoch] 2/100000    [epoch_step] 8/12     [train_step] 32     [loss] 1.003936     [scale_loss] 128.503769     [lr] 0.000200     [t] [ 184   16  615 1139 1269 1281 1064 1565]
+ [epoch] 2/100000    [epoch_step] 10/12     [train_step] 34     [loss] 1.001364     [scale_loss] 128.174561     [lr] 0.000200     [t] [1470  711  811 1230  200  454  427  101]
+
+ [epoch] 3/100000    [epoch_step] 0/12     [train_step] 36     [loss] 1.002513     [scale_loss] 128.321655     [lr] 0.000200     [t] [1376  710  499  504 1508  384  124 1604]
+ [epoch] 3/100000    [epoch_step] 2/12     [train_step] 38     [loss] 1.001140     [scale_loss] 128.145966     [lr] 0.000200     [t] [ 695 1916   65 1687 1593 1233  601  374]
+ [epoch] 3/100000    [epoch_step] 4/12     [train_step] 40     [loss] 1.001415     [scale_loss] 128.181076     [lr] 0.000200     [t] [1715  456  494   53  479 1104 1395 1702]
+ [epoch] 3/100000    [epoch_step] 6/12     [train_step] 42     [loss] 1.002112     [scale_loss] 128.270294     [lr] 0.000200     [t] [1860 1672  144 1589 1088 1265   71 1525]
+ [epoch] 3/100000    [epoch_step] 8/12     [train_step] 44     [loss] 1.002498     [scale_loss] 128.319687     [lr] 0.000200     [t] [ 735  529 1544 1648  782  974 1746  619]
+ [epoch] 3/100000    [epoch_step] 10/12     [train_step] 46     [loss] 1.001302     [scale_loss] 128.166611     [lr] 0.000200     [t] [1701 1736  321 1491 1907  724 1480  528]
+
+ [epoch] 4/100000    [epoch_step] 0/12     [train_step] 48     [loss] 1.001542     [scale_loss] 128.197388     [lr] 0.000200     [t] [ 769  728  694  718  486 1706 1040  192]
+ [epoch] 4/100000    [epoch_step] 2/12     [train_step] 50     [loss] 0.999795     [scale_loss] 127.973717     [lr] 0.000200     [t] [1502  132  110 1284 1411 1532 1315 1192]
+ [epoch] 4/100000    [epoch_step] 4/12     [train_step] 52     [loss] 1.000357     [scale_loss] 128.045654     [lr] 0.000200     [t] [ 176 1894 1590  720 1284  199 1421  221]
+ [epoch] 4/100000    [epoch_step] 6/12     [train_step] 54     [loss] 1.001190     [scale_loss] 128.152313     [lr] 0.000200     [t] [ 321  889  871  773 1934  483 1003  565]
+ [epoch] 4/100000    [epoch_step] 8/12     [train_step] 56     [loss] 1.000100     [scale_loss] 128.012787     [lr] 0.000200     [t] [1169  708 1403  292  913 1997  842 1911]
+ [epoch] 4/100000    [epoch_step] 10/12     [train_step] 58     [loss] 0.999249     [scale_loss] 127.903915     [lr] 0.000200     [t] [1067  438  829  229  414 1955  431 1775]
+
+ [epoch] 5/100000    [epoch_step] 0/12     [train_step] 60     [loss] 1.002218     [scale_loss] 128.283920     [lr] 0.000200     [t] [1526  782  263 1224   67 1861 1161 1179]
+ [epoch] 5/100000    [epoch_step] 2/12     [train_step] 62     [loss] 0.998791     [scale_loss] 127.845276     [lr] 0.000200     [t] [1640  486 1792  715   88 1425 1851 1965]
+ [epoch] 5/100000    [epoch_step] 4/12     [train_step] 64     [loss] 0.998385     [scale_loss] 127.793320     [lr] 0.000200     [t] [1140 1919  595  254 1772 1870 1218 1789]
+ [epoch] 5/100000    [epoch_step] 6/12     [train_step] 66     [loss] 1.001588     [scale_loss] 128.203232     [lr] 0.000200     [t] [1046  814 1428 1018 1907 1759 1834  518]
+ [epoch] 5/100000    [epoch_step] 8/12     [train_step] 68     [loss] 1.001731     [scale_loss] 128.221512     [lr] 0.000200     [t] [1418 1203  342  342  785 1744   62  798]
+ [epoch] 5/100000    [epoch_step] 10/12     [train_step] 70     [loss] 1.000616     [scale_loss] 128.078842     [lr] 0.000200     [t] [1489 1214  746  433 1013 1584  729  548]
+
+ [epoch] 6/100000    [epoch_step] 0/12     [train_step] 72     [loss] 0.999629     [scale_loss] 127.952545     [lr] 0.000200     [t] [ 554 1419 1281 1440 1555 1101 1259  210]
+ [epoch] 6/100000    [epoch_step] 2/12     [train_step] 74     [loss] 1.000118     [scale_loss] 128.015076     [lr] 0.000200     [t] [ 937  437  289   35 1778  920 1910  947]
+ [epoch] 6/100000    [epoch_step] 4/12     [train_step] 76     [loss] 1.001222     [scale_loss] 128.156403     [lr] 0.000200     [t] [1587 1971  576 1820  433 1086  275 1630]
+ [epoch] 6/100000    [epoch_step] 6/12     [train_step] 78     [loss] 1.002548     [scale_loss] 128.326187     [lr] 0.000200     [t] [ 161 1777 1592  382 1790 1680 1816  698]
+ [epoch] 6/100000    [epoch_step] 8/12     [train_step] 80     [loss] 0.999368     [scale_loss] 127.919159     [lr] 0.000200     [t] [1559  762   90 1041 1560 1562 1117 1997]
+ [epoch] 6/100000    [epoch_step] 10/12     [train_step] 82     [loss] 1.001916     [scale_loss] 128.245270     [lr] 0.000200     [t] [1890  693  114 1632 1442  984 1358  133]
+
+ [epoch] 7/100000    [epoch_step] 0/12     [train_step] 84     [loss] 0.999526     [scale_loss] 127.939346     [lr] 0.000200     [t] [ 823 1418  811 1637 1745  551 1286  841]
+ [epoch] 7/100000    [epoch_step] 2/12     [train_step] 86     [loss] 1.000889     [scale_loss] 128.113770     [lr] 0.000200     [t] [1696  106  267  783 1597  467 1061 1517]
+ [epoch] 7/100000    [epoch_step] 4/12     [train_step] 88     [loss] 0.999475     [scale_loss] 127.932800     [lr] 0.000200     [t] [1557 1101 1573 1309  698  652 1377  977]
+ [epoch] 7/100000    [epoch_step] 6/12     [train_step] 90     [loss] 1.000110     [scale_loss] 128.014023     [lr] 0.000200     [t] [ 742 1757 1854 1145 1203 1876 1019 1907]
+ [epoch] 7/100000    [epoch_step] 8/12     [train_step] 92     [loss] 1.000055     [scale_loss] 128.007050     [lr] 0.000200     [t] [ 507  308  827  194 1420  280  579   59]
+ [epoch] 7/100000    [epoch_step] 10/12     [train_step] 94     [loss] 1.000507     [scale_loss] 128.064865     [lr] 0.000200     [t] [ 539  168 1935   97 1567  221 1057 1409]
+
+ [epoch] 8/100000    [epoch_step] 0/12     [train_step] 96     [loss] 1.001218     [scale_loss] 128.155914     [lr] 0.000200     [t] [1801  290  169  598  338  636  995 1145]
+ [epoch] 8/100000    [epoch_step] 2/12     [train_step] 98     [loss] 1.001467     [scale_loss] 128.187714     [lr] 0.000200     [t] [ 730  353  295 1771  160  668  654  285]
+ [epoch] 8/100000    [epoch_step] 4/12     [train_step] 100     [loss] 1.002306     [scale_loss] 128.295135     [lr] 0.000200     [t] [1218  174  930 1406 1516  745  497   73]
+ [epoch] 8/100000    [epoch_step] 6/12     [train_step] 102     [loss] 1.000096     [scale_loss] 128.012329     [lr] 0.000200     [t] [ 584  700  626  564 1313 1666  235 1096]
+ [epoch] 8/100000    [epoch_step] 8/12     [train_step] 104     [loss] 1.002527     [scale_loss] 128.323395     [lr] 0.000200     [t] [1031  541 1027 1084 1136 1725 1301 1811]
+ [epoch] 8/100000    [epoch_step] 10/12     [train_step] 106     [loss] 1.000986     [scale_loss] 128.126251     [lr] 0.000200     [t] [ 584 1142  388 1349 1111  727 1193 1016]
+
+ [epoch] 9/100000    [epoch_step] 0/12     [train_step] 108     [loss] 1.001718     [scale_loss] 128.219925     [lr] 0.000200     [t] [ 951  287  157  516  845 1349  725  686]
+ [epoch] 9/100000    [epoch_step] 2/12     [train_step] 110     [loss] 1.003531     [scale_loss] 128.451965     [lr] 0.000200     [t] [1506 1266  509 1594  414  623  836  953]
+ [epoch] 9/100000    [epoch_step] 4/12     [train_step] 112     [loss] 1.000741     [scale_loss] 128.094788     [lr] 0.000200     [t] [ 116  708   42 1763 1593   48  198  877]
+ [epoch] 9/100000    [epoch_step] 6/12     [train_step] 114     [loss] 0.999150     [scale_loss] 127.891159     [lr] 0.000200     [t] [1267 1800 1429 1782  585  261  547 1629]
+ [epoch] 9/100000    [epoch_step] 8/12     [train_step] 116     [loss] 1.000491     [scale_loss] 128.062897     [lr] 0.000200     [t] [1032 1869  346  586  168  272    8  824]
+ [epoch] 9/100000    [epoch_step] 10/12     [train_step] 118     [loss] 0.999557     [scale_loss] 127.943260     [lr] 0.000200     [t] [1829 1587  648 1105 1159 1989  286  918]
+
+ [epoch] 10/100000    [epoch_step] 0/12     [train_step] 120     [loss] 1.002813     [scale_loss] 128.360077     [lr] 0.000200     [t] [1157   48  202  219 1676  102  504  413]
+ [epoch] 10/100000    [epoch_step] 2/12     [train_step] 122     [loss] 1.003599     [scale_loss] 128.460693     [lr] 0.000200     [t] [ 297  156 1844 1864 1070 1935  352  467]
+ [epoch] 10/100000    [epoch_step] 4/12     [train_step] 124     [loss] 1.001736     [scale_loss] 128.222168     [lr] 0.000200     [t] [1083  547 1210 1044  390 1406    7 1471]
+ [epoch] 10/100000    [epoch_step] 6/12     [train_step] 126     [loss] 1.002960     [scale_loss] 128.378891     [lr] 0.000200     [t] [ 110 1479 1918 1612  177  144  895  986]
+ [epoch] 10/100000    [epoch_step] 8/12     [train_step] 128     [loss] 1.000912     [scale_loss] 128.116684     [lr] 0.000200     [t] [ 391  121  353 1356 1072 1722 1132  388]
+ [epoch] 10/100000    [epoch_step] 10/12     [train_step] 130     [loss] 1.001623     [scale_loss] 128.207748     [lr] 0.000200     [t] [ 517  850 1284 1870 1815  442 1451  374]
+
+ [epoch] 11/100000    [epoch_step] 0/12     [train_step] 132     [loss] 1.002527     [scale_loss] 128.323410     [lr] 0.000200     [t] [1575 1389 1666 1005 1944  570  665 1406]
+ [epoch] 11/100000    [epoch_step] 2/12     [train_step] 134     [loss] 1.001239     [scale_loss] 128.158630     [lr] 0.000200     [t] [ 598 1307 1466  302 1434  589  287 1720]
+ [epoch] 11/100000    [epoch_step] 4/12     [train_step] 136     [loss] 0.999347     [scale_loss] 127.916382     [lr] 0.000200     [t] [ 401  253  910  487 1287  136  406  729]
+ [epoch] 11/100000    [epoch_step] 6/12     [train_step] 138     [loss] 0.999408     [scale_loss] 127.924255     [lr] 0.000200     [t] [ 406  344  984 1101  135  501 1901 1616]
+ [epoch] 11/100000    [epoch_step] 8/12     [train_step] 140     [loss] 1.001307     [scale_loss] 128.167358     [lr] 0.000200     [t] [  88 1846  244  395    5  950 1062 1338]
+ [epoch] 11/100000    [epoch_step] 10/12     [train_step] 142     [loss] 0.998769     [scale_loss] 127.842484     [lr] 0.000200     [t] [1898 1119  656  358 1899 1391  556 1370]
+
+ [epoch] 12/100000    [epoch_step] 0/12     [train_step] 144     [loss] 1.002151     [scale_loss] 128.275299     [lr] 0.000200     [t] [ 451 1392  149 1512 1208 1387   79 1520]
+ [epoch] 12/100000    [epoch_step] 2/12     [train_step] 146     [loss] 1.000186     [scale_loss] 128.023773     [lr] 0.000200     [t] [ 129   19 1008 1390 1155 1186 1897 1238]
+ [epoch] 12/100000    [epoch_step] 4/12     [train_step] 148     [loss] 1.000860     [scale_loss] 128.110031     [lr] 0.000200     [t] [1062 1901  482  643  752  978 1967 1459]
+ [epoch] 12/100000    [epoch_step] 6/12     [train_step] 150     [loss] 0.999736     [scale_loss] 127.966148     [lr] 0.000200     [t] [1939  801  649 1211  611  342  135 1412]
+ [epoch] 12/100000    [epoch_step] 8/12     [train_step] 152     [loss] 1.000369     [scale_loss] 128.047226     [lr] 0.000200     [t] [ 102 1505  815  767  868 1198 1850 1676]
+ [epoch] 12/100000    [epoch_step] 10/12     [train_step] 154     [loss] 1.000241     [scale_loss] 128.030853     [lr] 0.000200     [t] [1098 1929 1278  840 1328 1097  548 1690]
+
+ [epoch] 13/100000    [epoch_step] 0/12     [train_step] 156     [loss] 1.001508     [scale_loss] 128.192963     [lr] 0.000200     [t] [1339  167  657   98 1675  751 1309 1263]
+ [epoch] 13/100000    [epoch_step] 2/12     [train_step] 158     [loss] 1.002665     [scale_loss] 128.341064     [lr] 0.000200     [t] [ 888  796 1638 1917  100  144 1397  123]
+ [epoch] 13/100000    [epoch_step] 4/12     [train_step] 160     [loss] 0.999769     [scale_loss] 127.970482     [lr] 0.000200     [t] [1648  237  881  928 1167 1884   28 1501]
+ [epoch] 13/100000    [epoch_step] 6/12     [train_step] 162     [loss] 1.002374     [scale_loss] 128.303864     [lr] 0.000200     [t] [ 535 1919 1535 1948 1301 1779  502 1018]
+ [epoch] 13/100000    [epoch_step] 8/12     [train_step] 164     [loss] 1.001376     [scale_loss] 128.176178     [lr] 0.000200     [t] [1806   11 1879  462  590 1990 1199  241]
+ [epoch] 13/100000    [epoch_step] 10/12     [train_step] 166     [loss] 1.001042     [scale_loss] 128.133392     [lr] 0.000200     [t] [1159 1650  945  906  535  238   49  484]
+
+ [epoch] 14/100000    [epoch_step] 0/12     [train_step] 168     [loss] 1.001947     [scale_loss] 128.249176     [lr] 0.000200     [t] [ 102 1224  348  563 1467 1191  458 1669]
+ [epoch] 14/100000    [epoch_step] 2/12     [train_step] 170     [loss] 1.000288     [scale_loss] 128.036865     [lr] 0.000200     [t] [1473 1437 1568 1071 1522 1269  216  974]
+ [epoch] 14/100000    [epoch_step] 4/12     [train_step] 172     [loss] 1.000958     [scale_loss] 128.122604     [lr] 0.000200     [t] [ 303 1562  819 1778  469  342  458  355]
+ [epoch] 14/100000    [epoch_step] 6/12     [train_step] 174     [loss] 1.001133     [scale_loss] 128.145020     [lr] 0.000200     [t] [ 311  945 1755 1588 1902  589 1594 1457]
+ [epoch] 14/100000    [epoch_step] 8/12     [train_step] 176     [loss] 0.999032     [scale_loss] 127.876122     [lr] 0.000200     [t] [1669 1348  147 1220  652  330  595  130]
+ [epoch] 14/100000    [epoch_step] 10/12     [train_step] 178     [loss] 0.999553     [scale_loss] 127.942772     [lr] 0.000200     [t] [1106  193  348 1233 1572  539 1275  262]
+
+ [epoch] 15/100000    [epoch_step] 0/12     [train_step] 180     [loss] 1.000649     [scale_loss] 128.083115     [lr] 0.000200     [t] [ 199 1934 1872 1933 1358   18  884 1356]
+ [epoch] 15/100000    [epoch_step] 2/12     [train_step] 182     [loss] 0.998708     [scale_loss] 127.834587     [lr] 0.000200     [t] [1059 1265  623  902 1078 1054  855  283]
+ [epoch] 15/100000    [epoch_step] 4/12     [train_step] 184     [loss] 1.000268     [scale_loss] 128.034348     [lr] 0.000200     [t] [ 905   56 1258 1220  662 1680  994 1281]
+ [epoch] 15/100000    [epoch_step] 6/12     [train_step] 186     [loss] 1.001628     [scale_loss] 128.208374     [lr] 0.000200     [t] [1065  286 1223  415 1174  880  368    2]
+ [epoch] 15/100000    [epoch_step] 8/12     [train_step] 188     [loss] 0.999369     [scale_loss] 127.919266     [lr] 0.000200     [t] [1780  896  268  309   49 1161 1675 1653]
+ [epoch] 15/100000    [epoch_step] 10/12     [train_step] 190     [loss] 1.001503     [scale_loss] 128.192337     [lr] 0.000200     [t] [1126 1364 1427 1953 1868 1099 1430 1511]
+
+ [epoch] 16/100000    [epoch_step] 0/12     [train_step] 192     [loss] 1.001461     [scale_loss] 128.187057     [lr] 0.000200     [t] [ 573  709  449 1300 1763  116 1833 1850]
+ [epoch] 16/100000    [epoch_step] 2/12     [train_step] 194     [loss] 1.000241     [scale_loss] 128.030853     [lr] 0.000200     [t] [ 519 1336 1186 1448 1884  248 1697  935]
+ [epoch] 16/100000    [epoch_step] 4/12     [train_step] 196     [loss] 1.001389     [scale_loss] 128.177841     [lr] 0.000200     [t] [ 818  575 1721 1247 1340 1825  339  760]
+ [epoch] 16/100000    [epoch_step] 6/12     [train_step] 198     [loss] 1.000314     [scale_loss] 128.040131     [lr] 0.000200     [t] [  53 1172 1205 1531 1782 1708  553 1670]
+ [epoch] 16/100000    [epoch_step] 8/12     [train_step] 200     [loss] 0.999680     [scale_loss] 127.959099     [lr] 0.000200     [t] [1304 1398 1934  744   96 1544  842 1750]
+ [epoch] 16/100000    [epoch_step] 10/12     [train_step] 202     [loss] 1.000233     [scale_loss] 128.029831     [lr] 0.000200     [t] [1345  331 1511 1674 1617  581 1772 1566]
+
+ [epoch] 17/100000    [epoch_step] 0/12     [train_step] 204     [loss] 0.999959     [scale_loss] 127.994812     [lr] 0.000200     [t] [ 245   52 1447  166 1202  238 1262  262]
+ [epoch] 17/100000    [epoch_step] 2/12     [train_step] 206     [loss] 0.999714     [scale_loss] 127.963432     [lr] 0.000200     [t] [1145 1143 1756  791  325  888  409  440]
+ [epoch] 17/100000    [epoch_step] 4/12     [train_step] 208     [loss] 1.000431     [scale_loss] 128.055206     [lr] 0.000200     [t] [ 630    4  421 1151 1252 1403  331  808]
+ [epoch] 17/100000    [epoch_step] 6/12     [train_step] 210     [loss] 1.000897     [scale_loss] 128.114868     [lr] 0.000200     [t] [ 920  392  307  136 1682 1510 1212   22]
+ [epoch] 17/100000    [epoch_step] 8/12     [train_step] 212     [loss] 1.001709     [scale_loss] 128.218750     [lr] 0.000200     [t] [1386 1019  175 1731 1062 1813   29 1693]
+ [epoch] 17/100000    [epoch_step] 10/12     [train_step] 214     [loss] 0.997982     [scale_loss] 127.741722     [lr] 0.000200     [t] [1895  324  860 1789 1875 1084 1555  432]
+
+ [epoch] 18/100000    [epoch_step] 0/12     [train_step] 216     [loss] 0.998094     [scale_loss] 127.755974     [lr] 0.000200     [t] [1693  755  649 1657 1477 1975  635   21]
+ [epoch] 18/100000    [epoch_step] 2/12     [train_step] 218     [loss] 0.998886     [scale_loss] 127.857376     [lr] 0.000200     [t] [ 767  370 1155  397 1990  614 1857  913]
+ [epoch] 18/100000    [epoch_step] 4/12     [train_step] 220     [loss] 1.001338     [scale_loss] 128.171310     [lr] 0.000200     [t] [1675 1830  531 1266   95 1875  128 1037]
+ [epoch] 18/100000    [epoch_step] 6/12     [train_step] 222     [loss] 0.999444     [scale_loss] 127.928772     [lr] 0.000200     [t] [ 178 1034 1487 1699  606  991  430  742]
+ [epoch] 18/100000    [epoch_step] 8/12     [train_step] 224     [loss] 1.001158     [scale_loss] 128.148163     [lr] 0.000200     [t] [1649  941 1206  201   99  952  993  950]
+ [epoch] 18/100000    [epoch_step] 10/12     [train_step] 226     [loss] 1.000655     [scale_loss] 128.083862     [lr] 0.000200     [t] [1384  497  989 1048 1142 1264 1230 1106]
+
+ [epoch] 19/100000    [epoch_step] 0/12     [train_step] 228     [loss] 1.000510     [scale_loss] 128.065323     [lr] 0.000200     [t] [ 652 1244  406 1846 1149 1675 1796  343]
+ [epoch] 19/100000    [epoch_step] 2/12     [train_step] 230     [loss] 0.999619     [scale_loss] 127.951233     [lr] 0.000200     [t] [1642  948 1307 1875 1276 1699  735  434]
+ [epoch] 19/100000    [epoch_step] 4/12     [train_step] 232     [loss] 1.001189     [scale_loss] 128.152161     [lr] 0.000200     [t] [ 452  762 1312 1888 1732  101  672 1136]
+ [epoch] 19/100000    [epoch_step] 6/12     [train_step] 234     [loss] 0.998569     [scale_loss] 127.816895     [lr] 0.000200     [t] [ 686 1283 1959 1098 1889  447 1810  477]
+ [epoch] 19/100000    [epoch_step] 8/12     [train_step] 236     [loss] 1.000724     [scale_loss] 128.092728     [lr] 0.000200     [t] [ 851  155 1921 1177 1462 1645  536 1282]
+ [epoch] 19/100000    [epoch_step] 10/12     [train_step] 238     [loss] 0.998788     [scale_loss] 127.844841     [lr] 0.000200     [t] [1409 1068  423  390  137 1386 1620  877]
+
+ [epoch] 20/100000    [epoch_step] 0/12     [train_step] 240     [loss] 1.000165     [scale_loss] 128.021179     [lr] 0.000200     [t] [1893  652  366 1792 1615 1740 1863 1598]
+ [epoch] 20/100000    [epoch_step] 2/12     [train_step] 242     [loss] 1.000145     [scale_loss] 128.018555     [lr] 0.000200     [t] [ 250  666  508  219   68 1644 1215  585]
+ [epoch] 20/100000    [epoch_step] 4/12     [train_step] 244     [loss] 1.000893     [scale_loss] 128.114258     [lr] 0.000200     [t] [ 234  220  283 1532 1162  935 1170 1247]
+ [epoch] 20/100000    [epoch_step] 6/12     [train_step] 246     [loss] 0.999140     [scale_loss] 127.889954     [lr] 0.000200     [t] [ 262 1291 1190    7  648 1288  768  739]
+ [epoch] 20/100000    [epoch_step] 8/12     [train_step] 248     [loss] 1.001201     [scale_loss] 128.153748     [lr] 0.000200     [t] [ 183 1691 1688 1918 1110  283 1556  231]
+ [epoch] 20/100000    [epoch_step] 10/12     [train_step] 250     [loss] 1.000022     [scale_loss] 128.002777     [lr] 0.000200     [t] [ 780  970  631 1808 1550 1901  170 1930]
+
+ [epoch] 21/100000    [epoch_step] 0/12     [train_step] 252     [loss] 1.001667     [scale_loss] 128.213379     [lr] 0.000200     [t] [ 328 1069 1368 1547   42  682  985 1187]
+ [epoch] 21/100000    [epoch_step] 2/12     [train_step] 254     [loss] 0.999714     [scale_loss] 127.963394     [lr] 0.000200     [t] [ 957 1881  943  274 1252 1532 1147 1393]
+ [epoch] 21/100000    [epoch_step] 4/12     [train_step] 256     [loss] 1.000512     [scale_loss] 128.065521     [lr] 0.000200     [t] [1169 1647  481 1791 1046   92 1348  745]
+ [epoch] 21/100000    [epoch_step] 6/12     [train_step] 258     [loss] 1.000855     [scale_loss] 128.109436     [lr] 0.000200     [t] [1139 1610  575  237 1074  806 1180  401]
+ [epoch] 21/100000    [epoch_step] 8/12     [train_step] 260     [loss] 0.998779     [scale_loss] 127.843674     [lr] 0.000200     [t] [1009 1450  474  129 1734 1365 1022 1474]
+ [epoch] 21/100000    [epoch_step] 10/12     [train_step] 262     [loss] 1.000189     [scale_loss] 128.024170     [lr] 0.000200     [t] [ 642   11   15 1951  170 1032 1037 1844]
+
+ [epoch] 22/100000    [epoch_step] 0/12     [train_step] 264     [loss] 0.999856     [scale_loss] 127.981613     [lr] 0.000200     [t] [1785  666  102  963 1435  873 1049 1716]
+ [epoch] 22/100000    [epoch_step] 2/12     [train_step] 266     [loss] 1.000130     [scale_loss] 128.016617     [lr] 0.000200     [t] [1375 1892 1691  629  162  308 1632 1343]
+ [epoch] 22/100000    [epoch_step] 4/12     [train_step] 268     [loss] 0.999688     [scale_loss] 127.960022     [lr] 0.000200     [t] [1536  105  143  912   54  181  713  783]
+ [epoch] 22/100000    [epoch_step] 6/12     [train_step] 270     [loss] 0.999354     [scale_loss] 127.917259     [lr] 0.000200     [t] [ 494 1126  683  807 1964  993   92  356]
+ [epoch] 22/100000    [epoch_step] 8/12     [train_step] 272     [loss] 0.997109     [scale_loss] 127.629967     [lr] 0.000200     [t] [ 875  215  338  922 1371 1120  301 1956]
+ [epoch] 22/100000    [epoch_step] 10/12     [train_step] 274     [loss] 1.002674     [scale_loss] 128.342300     [lr] 0.000200     [t] [1905 1485  905  527 1125   91 1391 1846]
+
+ [epoch] 23/100000    [epoch_step] 0/12     [train_step] 276     [loss] 0.999498     [scale_loss] 127.935806     [lr] 0.000200     [t] [1542  128  866  983  609 1297 1558  598]
+ [epoch] 23/100000    [epoch_step] 2/12     [train_step] 278     [loss] 1.001117     [scale_loss] 128.143021     [lr] 0.000200     [t] [1117  273  896  284  304 1167 1279  696]
+ [epoch] 23/100000    [epoch_step] 4/12     [train_step] 280     [loss] 1.001343     [scale_loss] 128.171967     [lr] 0.000200     [t] [1536  878  250 1503 1802  329  521  806]
+ [epoch] 23/100000    [epoch_step] 6/12     [train_step] 282     [loss] 1.000306     [scale_loss] 128.039200     [lr] 0.000200     [t] [ 774 1492 1584  760   29 1752  342   83]
+ [epoch] 23/100000    [epoch_step] 8/12     [train_step] 284     [loss] 0.999960     [scale_loss] 127.994904     [lr] 0.000200     [t] [ 525 1129  459  780 1190 1224  834 1356]
+ [epoch] 23/100000    [epoch_step] 10/12     [train_step] 286     [loss] 1.000974     [scale_loss] 128.124619     [lr] 0.000200     [t] [ 595   10 1976  904  503 1117  183 1125]
+
+ [epoch] 24/100000    [epoch_step] 0/12     [train_step] 288     [loss] 0.999915     [scale_loss] 127.989059     [lr] 0.000200     [t] [1847  109 1029  711 1212 1721 1282  214]
+ [epoch] 24/100000    [epoch_step] 2/12     [train_step] 290     [loss] 0.998124     [scale_loss] 127.759880     [lr] 0.000200     [t] [1791 1826  803 1069  328  817 1059  371]
+ [epoch] 24/100000    [epoch_step] 4/12     [train_step] 292     [loss] 1.000034     [scale_loss] 128.004303     [lr] 0.000200     [t] [1248 1998 1264 1611 1202  195 1971  198]
+ [epoch] 24/100000    [epoch_step] 6/12     [train_step] 294     [loss] 1.000222     [scale_loss] 128.028397     [lr] 0.000200     [t] [1349  939 1728 1139  534   62  594  280]
+ [epoch] 24/100000    [epoch_step] 8/12     [train_step] 296     [loss] 0.999339     [scale_loss] 127.915436     [lr] 0.000200     [t] [ 141  927 1479    2 1455 1812  264 1885]
+ [epoch] 24/100000    [epoch_step] 10/12     [train_step] 298     [loss] 1.000990     [scale_loss] 128.126740     [lr] 0.000200     [t] [ 457 1710   49  297   49 1780  108 1685]
+
+ [epoch] 25/100000    [epoch_step] 0/12     [train_step] 300     [loss] 1.000710     [scale_loss] 128.090820     [lr] 0.000200     [t] [  28 1248 1624  532   80  229   58  871]
+ [epoch] 25/100000    [epoch_step] 2/12     [train_step] 302     [loss] 1.000442     [scale_loss] 128.056549     [lr] 0.000200     [t] [1894 1778  107  416 1880 1959  887  182]
+ [epoch] 25/100000    [epoch_step] 4/12     [train_step] 304     [loss] 1.000263     [scale_loss] 128.033630     [lr] 0.000200     [t] [1596   38   49 1726  644  120 1339  139]
+ [epoch] 25/100000    [epoch_step] 6/12     [train_step] 306     [loss] 0.998463     [scale_loss] 127.803207     [lr] 0.000200     [t] [ 417  782 1209  116 1758  567   75  930]
+ [epoch] 25/100000    [epoch_step] 8/12     [train_step] 308     [loss] 0.999689     [scale_loss] 127.960144     [lr] 0.000200     [t] [1518  928  478 1126  564 1238 1348  887]
+ [epoch] 25/100000    [epoch_step] 10/12     [train_step] 310     [loss] 0.999007     [scale_loss] 127.872910     [lr] 0.000200     [t] [ 878  532 1606 1844  262 1423  700 1847]
+
+ [epoch] 26/100000    [epoch_step] 0/12     [train_step] 312     [loss] 1.001349     [scale_loss] 128.172653     [lr] 0.000200     [t] [ 324  746 1059  858   12 1011 1931  306]
+ [epoch] 26/100000    [epoch_step] 2/12     [train_step] 314     [loss] 1.000604     [scale_loss] 128.077271     [lr] 0.000200     [t] [1808 1089 1806  127  714 1077 1110 1598]
+ [epoch] 26/100000    [epoch_step] 4/12     [train_step] 316     [loss] 1.002348     [scale_loss] 128.300537     [lr] 0.000200     [t] [ 476  989 1382  423  345  978  205  860]
+ [epoch] 26/100000    [epoch_step] 6/12     [train_step] 318     [loss] 1.000648     [scale_loss] 128.082947     [lr] 0.000200     [t] [ 320 1663 1898 1037 1745  741   23  559]
+ [epoch] 26/100000    [epoch_step] 8/12     [train_step] 320     [loss] 1.001217     [scale_loss] 128.155777     [lr] 0.000200     [t] [1247 1898 1802 1214  797  334  440 1236]
+ [epoch] 26/100000    [epoch_step] 10/12     [train_step] 322     [loss] 1.000203     [scale_loss] 128.026016     [lr] 0.000200     [t] [ 808  871  398  111  162  132 1807 1838]
+
+ [epoch] 27/100000    [epoch_step] 0/12     [train_step] 324     [loss] 0.999466     [scale_loss] 127.931641     [lr] 0.000200     [t] [ 731 1648 1415 1230 1585  571  519 1045]
+ [epoch] 27/100000    [epoch_step] 2/12     [train_step] 326     [loss] 1.000863     [scale_loss] 128.110458     [lr] 0.000200     [t] [   5 1867 1399 1510 1128  412  308  590]
+ [epoch] 27/100000    [epoch_step] 4/12     [train_step] 328     [loss] 1.000365     [scale_loss] 128.046738     [lr] 0.000200     [t] [ 821  983  430  964  141 1021 1281 1903]
+ [epoch] 27/100000    [epoch_step] 6/12     [train_step] 330     [loss] 1.000447     [scale_loss] 128.057175     [lr] 0.000200     [t] [1384 1333 1442 1670 1450 1848 1830  630]
+ [epoch] 27/100000    [epoch_step] 8/12     [train_step] 332     [loss] 0.999768     [scale_loss] 127.970352     [lr] 0.000200     [t] [ 972  314 1526  643  526  971 1933 1724]
+ [epoch] 27/100000    [epoch_step] 10/12     [train_step] 334     [loss] 0.999741     [scale_loss] 127.966858     [lr] 0.000200     [t] [ 858 1371 1071 1427  925   55  439  205]
+
+ [epoch] 28/100000    [epoch_step] 0/12     [train_step] 336     [loss] 1.000531     [scale_loss] 128.067917     [lr] 0.000200     [t] [1169 1682 1564 1015 1319  716 1554  938]
+ [epoch] 28/100000    [epoch_step] 2/12     [train_step] 338     [loss] 1.000718     [scale_loss] 128.091949     [lr] 0.000200     [t] [1885  892 1623  783 1296 1450 1330 1083]
+ [epoch] 28/100000    [epoch_step] 4/12     [train_step] 340     [loss] 1.000954     [scale_loss] 128.122131     [lr] 0.000200     [t] [ 964 1142  897  209  796 1763 1911  471]
+ [epoch] 28/100000    [epoch_step] 6/12     [train_step] 342     [loss] 0.999805     [scale_loss] 127.975052     [lr] 0.000200     [t] [  39  158  258 1426  123 1013  853  164]
+ [epoch] 28/100000    [epoch_step] 8/12     [train_step] 344     [loss] 1.003142     [scale_loss] 128.402237     [lr] 0.000200     [t] [ 403 1596 1433 1173  716  765 1044  525]
+ [epoch] 28/100000    [epoch_step] 10/12     [train_step] 346     [loss] 0.999849     [scale_loss] 127.980698     [lr] 0.000200     [t] [ 234  456 1885 1045 1104  224 1958 1133]
+
+ [epoch] 29/100000    [epoch_step] 0/12     [train_step] 348     [loss] 1.000724     [scale_loss] 128.092621     [lr] 0.000200     [t] [1005 1268 1088 1511 1964   80 1691    7]
+ [epoch] 29/100000    [epoch_step] 2/12     [train_step] 350     [loss] 1.002225     [scale_loss] 128.284836     [lr] 0.000200     [t] [ 848  881  384 1979 1489 1778  749 1893]
+ [epoch] 29/100000    [epoch_step] 4/12     [train_step] 352     [loss] 1.000487     [scale_loss] 128.062286     [lr] 0.000200     [t] [ 915 1015 1087  994  620 1692   75   83]
+ [epoch] 29/100000    [epoch_step] 6/12     [train_step] 354     [loss] 0.998637     [scale_loss] 127.825562     [lr] 0.000200     [t] [1136  460  643  224  879 1531  472  579]
+ [epoch] 29/100000    [epoch_step] 8/12     [train_step] 356     [loss] 1.001305     [scale_loss] 128.167053     [lr] 0.000200     [t] [ 262   18  831 1947 1843  853 1760  299]
+ [epoch] 29/100000    [epoch_step] 10/12     [train_step] 358     [loss] 0.999019     [scale_loss] 127.874481     [lr] 0.000200     [t] [1166  799 1394  593  335  835 1960 1463]
+
+ [epoch] 30/100000    [epoch_step] 0/12     [train_step] 360     [loss] 1.000618     [scale_loss] 128.079147     [lr] 0.000200     [t] [1181 1866  660 1227  295  732 1673 1542]
+ [epoch] 30/100000    [epoch_step] 2/12     [train_step] 362     [loss] 0.998341     [scale_loss] 127.787689     [lr] 0.000200     [t] [ 955 1919  448  827 1428 1961   92 1097]
+ [epoch] 30/100000    [epoch_step] 4/12     [train_step] 364     [loss] 0.998748     [scale_loss] 127.839745     [lr] 0.000200     [t] [ 623 1030 1320 1401 1534  798 1423 1965]
+ [epoch] 30/100000    [epoch_step] 6/12     [train_step] 366     [loss] 1.000534     [scale_loss] 128.068390     [lr] 0.000200     [t] [1899   97 1205 1037  109  933  868  227]
+ [epoch] 30/100000    [epoch_step] 8/12     [train_step] 368     [loss] 1.002160     [scale_loss] 128.276489     [lr] 0.000200     [t] [ 982  748  298  275 1676 1806 1775  547]
+ [epoch] 30/100000    [epoch_step] 10/12     [train_step] 370     [loss] 0.999815     [scale_loss] 127.976379     [lr] 0.000200     [t] [ 893 1360 1080  229 1889   10 1851  270]
+
+ [epoch] 31/100000    [epoch_step] 0/12     [train_step] 372     [loss] 0.999569     [scale_loss] 127.944786     [lr] 0.000200     [t] [1034  826 1621  534 1377 1096 1310 1178]
+ [epoch] 31/100000    [epoch_step] 2/12     [train_step] 374     [loss] 0.999788     [scale_loss] 127.972900     [lr] 0.000200     [t] [  10  521 1435  813 1057 1485 1383  873]
+ [epoch] 31/100000    [epoch_step] 4/12     [train_step] 376     [loss] 1.000596     [scale_loss] 128.076309     [lr] 0.000200     [t] [1493  936  595 1487 1204 1401  958 1056]
+ [epoch] 31/100000    [epoch_step] 6/12     [train_step] 378     [loss] 0.998718     [scale_loss] 127.835938     [lr] 0.000200     [t] [ 538 1154 1086 1003  826  148 1458  998]
+ [epoch] 31/100000    [epoch_step] 8/12     [train_step] 380     [loss] 1.000045     [scale_loss] 128.005707     [lr] 0.000200     [t] [ 577 1187 1563 1312  273  814  724  839]
+ [epoch] 31/100000    [epoch_step] 10/12     [train_step] 382     [loss] 0.999975     [scale_loss] 127.996849     [lr] 0.000200     [t] [1425 1710  225 1555  595 1597  790 1572]
+
+ [epoch] 32/100000    [epoch_step] 0/12     [train_step] 384     [loss] 0.999330     [scale_loss] 127.914207     [lr] 0.000200     [t] [ 520 1578  632 1618 1700 1025 1586 1066]
+ [epoch] 32/100000    [epoch_step] 2/12     [train_step] 386     [loss] 1.001030     [scale_loss] 128.131805     [lr] 0.000200     [t] [ 486  316  262  768  430 1555  378 1360]
+ [epoch] 32/100000    [epoch_step] 4/12     [train_step] 388     [loss] 0.999886     [scale_loss] 127.985443     [lr] 0.000200     [t] [1447 1583   51 1454 1593 1294 1421 1995]
+ [epoch] 32/100000    [epoch_step] 6/12     [train_step] 390     [loss] 1.001102     [scale_loss] 128.141083     [lr] 0.000200     [t] [1070 1641 1796  688  252 1886 1686 1061]
+ [epoch] 32/100000    [epoch_step] 8/12     [train_step] 392     [loss] 0.999995     [scale_loss] 127.999298     [lr] 0.000200     [t] [1104 1591 1475 1787 1279 1771 1313  491]
+ [epoch] 32/100000    [epoch_step] 10/12     [train_step] 394     [loss] 0.997974     [scale_loss] 127.740646     [lr] 0.000200     [t] [ 252 1198 1638 1382   28 1799 1913 1470]
+
+ [epoch] 33/100000    [epoch_step] 0/12     [train_step] 396     [loss] 1.002000     [scale_loss] 128.256027     [lr] 0.000200     [t] [ 570 1645  404  725 1076 1644 1064 1643]
+ [epoch] 33/100000    [epoch_step] 2/12     [train_step] 398     [loss] 0.998370     [scale_loss] 127.791367     [lr] 0.000200     [t] [1526 1345  840 1464 1565  494 1639  457]
+ [epoch] 33/100000    [epoch_step] 4/12     [train_step] 400     [loss] 0.999036     [scale_loss] 127.876602     [lr] 0.000200     [t] [1874 1680 1024 1863  296   25  386  258]
+ [epoch] 33/100000    [epoch_step] 6/12     [train_step] 402     [loss] 1.000067     [scale_loss] 128.008530     [lr] 0.000200     [t] [ 268  192  512 1037   74 1358  242  998]
+ [epoch] 33/100000    [epoch_step] 8/12     [train_step] 404     [loss] 0.999205     [scale_loss] 127.898254     [lr] 0.000200     [t] [1194 1174 1775  624 1060  581  431 1026]
+ [epoch] 33/100000    [epoch_step] 10/12     [train_step] 406     [loss] 0.998294     [scale_loss] 127.781616     [lr] 0.000200     [t] [ 153 1735  338 1759 1404  333 1683 1127]
+
+ [epoch] 34/100000    [epoch_step] 0/12     [train_step] 408     [loss] 0.999585     [scale_loss] 127.946831     [lr] 0.000200     [t] [1422 1023 1450  100  363 1565 1991  817]
+ [epoch] 34/100000    [epoch_step] 2/12     [train_step] 410     [loss] 0.997846     [scale_loss] 127.724327     [lr] 0.000200     [t] [ 533  906  161 1401   40  980 1675 1400]
+ [epoch] 34/100000    [epoch_step] 4/12     [train_step] 412     [loss] 1.000196     [scale_loss] 128.025131     [lr] 0.000200     [t] [ 749  749 1331 1054  173  669  599  927]
+ [epoch] 34/100000    [epoch_step] 6/12     [train_step] 414     [loss] 1.000226     [scale_loss] 128.028931     [lr] 0.000200     [t] [1238 1792 1455 1130 1731 1017 1768  876]
+ [epoch] 34/100000    [epoch_step] 8/12     [train_step] 416     [loss] 0.999250     [scale_loss] 127.904045     [lr] 0.000200     [t] [ 445 1858 1986   92 1107 1025  877 1477]
+ [epoch] 34/100000    [epoch_step] 10/12     [train_step] 418     [loss] 0.999072     [scale_loss] 127.881279     [lr] 0.000200     [t] [ 970  900  623  382 1136 1019  502  827]
+
+ [epoch] 35/100000    [epoch_step] 0/12     [train_step] 420     [loss] 1.000927     [scale_loss] 128.118622     [lr] 0.000200     [t] [1572  628  317 1060  889  219 1596 1556]
+ [epoch] 35/100000    [epoch_step] 2/12     [train_step] 422     [loss] 1.001756     [scale_loss] 128.224792     [lr] 0.000200     [t] [1259  355  413 1350 1046  825  622   36]
+ [epoch] 35/100000    [epoch_step] 4/12     [train_step] 424     [loss] 1.000337     [scale_loss] 128.043182     [lr] 0.000200     [t] [ 733 1283 1241  112  366 1813 1246  981]
+ [epoch] 35/100000    [epoch_step] 6/12     [train_step] 426     [loss] 1.000579     [scale_loss] 128.074127     [lr] 0.000200     [t] [ 388 1992 1344 1333 1298  982 1831 1191]
+ [epoch] 35/100000    [epoch_step] 8/12     [train_step] 428     [loss] 1.001494     [scale_loss] 128.191254     [lr] 0.000200     [t] [1162  772  495 1738  962  256   11  892]
+ [epoch] 35/100000    [epoch_step] 10/12     [train_step] 430     [loss] 1.000848     [scale_loss] 128.108551     [lr] 0.000200     [t] [1710  325   33 1610 1206  145  912  419]
+
+ [epoch] 36/100000    [epoch_step] 0/12     [train_step] 432     [loss] 0.999305     [scale_loss] 127.911034     [lr] 0.000200     [t] [  35 1690  439 1678  163 1750 1656 1407]
+ [epoch] 36/100000    [epoch_step] 2/12     [train_step] 434     [loss] 1.000415     [scale_loss] 128.053085     [lr] 0.000200     [t] [ 922  452 1696 1332  923  303  936 1352]
+ [epoch] 36/100000    [epoch_step] 4/12     [train_step] 436     [loss] 0.997144     [scale_loss] 127.634445     [lr] 0.000200     [t] [ 771  753 1880  887  811  731 1269  261]
+ [epoch] 36/100000    [epoch_step] 6/12     [train_step] 438     [loss] 0.999803     [scale_loss] 127.974762     [lr] 0.000200     [t] [ 927   80 1693  761  408  933 1819  265]
+ [epoch] 36/100000    [epoch_step] 8/12     [train_step] 440     [loss] 1.002081     [scale_loss] 128.266403     [lr] 0.000200     [t] [1436 1175 1711  251 1970  858   92 1655]
+ [epoch] 36/100000    [epoch_step] 10/12     [train_step] 442     [loss] 1.000365     [scale_loss] 128.046722     [lr] 0.000200     [t] [1676   78  177  192 1520   48 1120  961]
+
+ [epoch] 37/100000    [epoch_step] 0/12     [train_step] 444     [loss] 0.999377     [scale_loss] 127.920280     [lr] 0.000200     [t] [1511 1944 1554   36 1142  499 1511  651]
+ [epoch] 37/100000    [epoch_step] 2/12     [train_step] 446     [loss] 1.002313     [scale_loss] 128.296112     [lr] 0.000200     [t] [1200  342 1993 1459  256  539 1776  835]
+ [epoch] 37/100000    [epoch_step] 4/12     [train_step] 448     [loss] 1.001076     [scale_loss] 128.137680     [lr] 0.000200     [t] [ 700  536 1493  433  918  719  238  659]
+ [epoch] 37/100000    [epoch_step] 6/12     [train_step] 450     [loss] 0.999438     [scale_loss] 127.928123     [lr] 0.000200     [t] [ 818 1279  661  151 1038  847  958 1330]
+ [epoch] 37/100000    [epoch_step] 8/12     [train_step] 452     [loss] 0.997802     [scale_loss] 127.718651     [lr] 0.000200     [t] [1099 1819  480  262 1824  810   49  522]
+ [epoch] 37/100000    [epoch_step] 10/12     [train_step] 454     [loss] 0.999946     [scale_loss] 127.993103     [lr] 0.000200     [t] [ 116  254 1075  106 1517 1018 1490 1740]
+
+ [epoch] 38/100000    [epoch_step] 0/12     [train_step] 456     [loss] 1.001053     [scale_loss] 128.134735     [lr] 0.000200     [t] [1590  225  351 1913  268 1817 1175  357]
+ [epoch] 38/100000    [epoch_step] 2/12     [train_step] 458     [loss] 1.001197     [scale_loss] 128.153244     [lr] 0.000200     [t] [ 254 1070  288 1424  635 1267  176 1014]
+ [epoch] 38/100000    [epoch_step] 4/12     [train_step] 460     [loss] 0.998184     [scale_loss] 127.767601     [lr] 0.000200     [t] [1630 1714 1251  385 1874 1245  587  405]
+ [epoch] 38/100000    [epoch_step] 6/12     [train_step] 462     [loss] 1.000349     [scale_loss] 128.044708     [lr] 0.000200     [t] [1802  949 1344 1917 1727 1008 1812 1196]
+ [epoch] 38/100000    [epoch_step] 8/12     [train_step] 464     [loss] 0.999806     [scale_loss] 127.975220     [lr] 0.000200     [t] [1039  715 1763  433  466  255   98  146]
+ [epoch] 38/100000    [epoch_step] 10/12     [train_step] 466     [loss] 0.997897     [scale_loss] 127.730774     [lr] 0.000200     [t] [1259 1519  570  678  111 1581  137  583]
+
+ [epoch] 39/100000    [epoch_step] 0/12     [train_step] 468     [loss] 1.000364     [scale_loss] 128.046646     [lr] 0.000200     [t] [1913  291 1639 1874   83 1909  781 1551]
+ [epoch] 39/100000    [epoch_step] 2/12     [train_step] 470     [loss] 1.000875     [scale_loss] 128.111938     [lr] 0.000200     [t] [ 333 1798 1557 1078  969 1410  958  724]
+ [epoch] 39/100000    [epoch_step] 4/12     [train_step] 472     [loss] 1.000927     [scale_loss] 128.118698     [lr] 0.000200     [t] [1300 1547  534 1265 1221 1850  128 1276]
+ [epoch] 39/100000    [epoch_step] 6/12     [train_step] 474     [loss] 1.001622     [scale_loss] 128.207581     [lr] 0.000200     [t] [ 494 1300 1826  875 1396 1094 1712 1790]
+ [epoch] 39/100000    [epoch_step] 8/12     [train_step] 476     [loss] 1.003313     [scale_loss] 128.424042     [lr] 0.000200     [t] [1913  693  459  599  430  200  663  709]
+ [epoch] 39/100000    [epoch_step] 10/12     [train_step] 478     [loss] 0.998164     [scale_loss] 127.764969     [lr] 0.000200     [t] [ 558  801 1063  995  230 1057  727  137]
+
+ [epoch] 40/100000    [epoch_step] 0/12     [train_step] 480     [loss] 1.000404     [scale_loss] 128.051727     [lr] 0.000200     [t] [1067  510 1655  101 1175  190 1081  154]
+ [epoch] 40/100000    [epoch_step] 2/12     [train_step] 482     [loss] 0.999494     [scale_loss] 127.935287     [lr] 0.000200     [t] [1074  225 1109 1661 1245 1542 1203    2]
+ [epoch] 40/100000    [epoch_step] 4/12     [train_step] 484     [loss] 0.999485     [scale_loss] 127.934113     [lr] 0.000200     [t] [ 369 1296 1425  610 1767 1722 1308  519]
+ [epoch] 40/100000    [epoch_step] 6/12     [train_step] 486     [loss] 0.998936     [scale_loss] 127.863754     [lr] 0.000200     [t] [1853  703  636  577 1656  797  183 1819]
+ [epoch] 40/100000    [epoch_step] 8/12     [train_step] 488     [loss] 1.000644     [scale_loss] 128.082489     [lr] 0.000200     [t] [  17 1929  264 1206 1430  423 1100   70]
+ [epoch] 40/100000    [epoch_step] 10/12     [train_step] 490     [loss] 1.001943     [scale_loss] 128.248764     [lr] 0.000200     [t] [1751 1438 1252 1490  237 1428 1297 1727]
+
+ [epoch] 41/100000    [epoch_step] 0/12     [train_step] 492     [loss] 0.999706     [scale_loss] 127.962364     [lr] 0.000200     [t] [1850  288  851 1370 1759 1620  721 1378]
+ [epoch] 41/100000    [epoch_step] 2/12     [train_step] 494     [loss] 1.002008     [scale_loss] 128.257050     [lr] 0.000200     [t] [1609 1555 1743 1436 1437 1210  444 1100]
+ [epoch] 41/100000    [epoch_step] 4/12     [train_step] 496     [loss] 1.000659     [scale_loss] 128.084351     [lr] 0.000200     [t] [1556 1215 1743  887   75 1661  493 1792]
+ [epoch] 41/100000    [epoch_step] 6/12     [train_step] 498     [loss] 1.000463     [scale_loss] 128.059311     [lr] 0.000200     [t] [ 652 1203 1265 1728  614  192 1730  837]
+ [epoch] 41/100000    [epoch_step] 8/12     [train_step] 500     [loss] 0.998453     [scale_loss] 127.802002     [lr] 0.000200     [t] [ 599  111 1591 1472 1111  937  180  648]
+ [epoch] 41/100000    [epoch_step] 10/12     [train_step] 502     [loss] 1.000755     [scale_loss] 128.096588     [lr] 0.000200     [t] [1955  456    8  143 1826 1715 1424  698]
+
+ [epoch] 42/100000    [epoch_step] 0/12     [train_step] 504     [loss] 1.000385     [scale_loss] 128.049332     [lr] 0.000200     [t] [ 228  837  891 1415 1574 1021  642 1621]
+ [epoch] 42/100000    [epoch_step] 2/12     [train_step] 506     [loss] 1.000314     [scale_loss] 128.040253     [lr] 0.000200     [t] [  15 1157 1259 1519 1914  951  222  890]
+ [epoch] 42/100000    [epoch_step] 4/12     [train_step] 508     [loss] 0.998292     [scale_loss] 127.781372     [lr] 0.000200     [t] [1296 1059 1148 1368  626 1405 1366 1909]
+ [epoch] 42/100000    [epoch_step] 6/12     [train_step] 510     [loss] 1.000944     [scale_loss] 128.120773     [lr] 0.000200     [t] [1860 1298 1415  188  917  506 1641  901]
+ [epoch] 42/100000    [epoch_step] 8/12     [train_step] 512     [loss] 1.000256     [scale_loss] 128.032761     [lr] 0.000200     [t] [1341  539  466 1791  421  965 1623 1064]
+ [epoch] 42/100000    [epoch_step] 10/12     [train_step] 514     [loss] 1.000266     [scale_loss] 128.034012     [lr] 0.000200     [t] [ 332 1780  707  290  398  706 1448  893]
+
+ [epoch] 43/100000    [epoch_step] 0/12     [train_step] 516     [loss] 1.000959     [scale_loss] 128.122711     [lr] 0.000200     [t] [ 396 1843  895  799 1163  892 1527  802]
+ [epoch] 43/100000    [epoch_step] 2/12     [train_step] 518     [loss] 1.001393     [scale_loss] 128.178345     [lr] 0.000200     [t] [1959  272 1661  883  762    1 1780 1865]
+ [epoch] 43/100000    [epoch_step] 4/12     [train_step] 520     [loss] 1.000220     [scale_loss] 128.028168     [lr] 0.000200     [t] [1104 1866  856  166 1657  165 1552 1871]
+ [epoch] 43/100000    [epoch_step] 6/12     [train_step] 522     [loss] 1.000551     [scale_loss] 128.070496     [lr] 0.000200     [t] [1597  854  345 1759  289  326  553  563]
+ [epoch] 43/100000    [epoch_step] 8/12     [train_step] 524     [loss] 1.000573     [scale_loss] 128.073364     [lr] 0.000200     [t] [1278  102  997 1250 1030  816  260  359]
+ [epoch] 43/100000    [epoch_step] 10/12     [train_step] 526     [loss] 0.999250     [scale_loss] 127.903954     [lr] 0.000200     [t] [ 701  905  901  661 1386 1355 1099 1896]
+
+ [epoch] 44/100000    [epoch_step] 0/12     [train_step] 528     [loss] 0.998319     [scale_loss] 127.784775     [lr] 0.000200     [t] [1864 1751 1650   62  112 1678  443 1455]
+ [epoch] 44/100000    [epoch_step] 2/12     [train_step] 530     [loss] 1.000729     [scale_loss] 128.093262     [lr] 0.000200     [t] [1875 1688  697  390 1783  863 1367 1160]
+ [epoch] 44/100000    [epoch_step] 4/12     [train_step] 532     [loss] 0.998485     [scale_loss] 127.806091     [lr] 0.000200     [t] [1136  788  549 1283  765 1066 1571  929]
+ [epoch] 44/100000    [epoch_step] 6/12     [train_step] 534     [loss] 0.998647     [scale_loss] 127.826866     [lr] 0.000200     [t] [  95 1881 1979  219  278 1271  283 1905]
+ [epoch] 44/100000    [epoch_step] 8/12     [train_step] 536     [loss] 1.001030     [scale_loss] 128.131897     [lr] 0.000200     [t] [1138  438  974 1400 1363   18    5  182]
+ [epoch] 44/100000    [epoch_step] 10/12     [train_step] 538     [loss] 1.001246     [scale_loss] 128.159454     [lr] 0.000200     [t] [ 259 1969  451   20 1191 1267 1197  822]
+
+ [epoch] 45/100000    [epoch_step] 0/12     [train_step] 540     [loss] 1.000710     [scale_loss] 128.090836     [lr] 0.000200     [t] [ 172  679 1841 1207  902  558  314   72]
+ [epoch] 45/100000    [epoch_step] 2/12     [train_step] 542     [loss] 0.998250     [scale_loss] 127.775940     [lr] 0.000200     [t] [ 905 1753  449  101  875  673  760  386]
+ [epoch] 45/100000    [epoch_step] 4/12     [train_step] 544     [loss] 1.001366     [scale_loss] 128.174866     [lr] 0.000200     [t] [1593  192  226 1526 1988  346 1885   55]
+ [epoch] 45/100000    [epoch_step] 6/12     [train_step] 546     [loss] 1.001324     [scale_loss] 128.169495     [lr] 0.000200     [t] [1221   98 1216 1110 1518 1922 1465  308]
+ [epoch] 45/100000    [epoch_step] 8/12     [train_step] 548     [loss] 1.000205     [scale_loss] 128.026245     [lr] 0.000200     [t] [ 441  629 1730 1515  972  304  125  609]
+ [epoch] 45/100000    [epoch_step] 10/12     [train_step] 550     [loss] 1.000648     [scale_loss] 128.082962     [lr] 0.000200     [t] [ 741  791 1695  806 1291  511 1927   99]
+
+ [epoch] 46/100000    [epoch_step] 0/12     [train_step] 552     [loss] 0.997940     [scale_loss] 127.736320     [lr] 0.000200     [t] [1433  538  171  956 1660  842  934 1858]
+ [epoch] 46/100000    [epoch_step] 2/12     [train_step] 554     [loss] 1.000271     [scale_loss] 128.034668     [lr] 0.000200     [t] [ 316  302 1959 1250 1374 1861 1987  956]
+ [epoch] 46/100000    [epoch_step] 4/12     [train_step] 556     [loss] 1.000101     [scale_loss] 128.012924     [lr] 0.000200     [t] [1528 1543  398 1648  172 1469 1417  939]
+ [epoch] 46/100000    [epoch_step] 6/12     [train_step] 558     [loss] 1.000907     [scale_loss] 128.116150     [lr] 0.000200     [t] [ 844  948 1735 1580 1354  388 1304  590]
+ [epoch] 46/100000    [epoch_step] 8/12     [train_step] 560     [loss] 0.999215     [scale_loss] 127.899536     [lr] 0.000200     [t] [1835 1689  634 1852 1945  404  452  823]
+ [epoch] 46/100000    [epoch_step] 10/12     [train_step] 562     [loss] 1.001039     [scale_loss] 128.132935     [lr] 0.000200     [t] [1747 1823 1836 1340  828  497  466  968]
+
+ [epoch] 47/100000    [epoch_step] 0/12     [train_step] 564     [loss] 0.999886     [scale_loss] 127.985458     [lr] 0.000200     [t] [1408 1948  408  368  534  441  679 1623]
+ [epoch] 47/100000    [epoch_step] 2/12     [train_step] 566     [loss] 0.999181     [scale_loss] 127.895126     [lr] 0.000200     [t] [ 313  343 1382 1381  810 1885 1578 1663]
+ [epoch] 47/100000    [epoch_step] 4/12     [train_step] 568     [loss] 0.999800     [scale_loss] 127.974442     [lr] 0.000200     [t] [1244 1635 1207 1234  486 1830 1526 1419]
+ [epoch] 47/100000    [epoch_step] 6/12     [train_step] 570     [loss] 0.999799     [scale_loss] 127.974289     [lr] 0.000200     [t] [1435 1594 1915 1770 1275  162  394  146]
+ [epoch] 47/100000    [epoch_step] 8/12     [train_step] 572     [loss] 0.998456     [scale_loss] 127.802353     [lr] 0.000200     [t] [ 259  116 1204  402 1317 1028 1519 1418]
+ [epoch] 47/100000    [epoch_step] 10/12     [train_step] 574     [loss] 1.000292     [scale_loss] 128.037323     [lr] 0.000200     [t] [1549  895  176 1591  939 1937 1487 1293]
+
+ [epoch] 48/100000    [epoch_step] 0/12     [train_step] 576     [loss] 0.999075     [scale_loss] 127.881554     [lr] 0.000200     [t] [1080  657 1573  252 1395  841 1207  821]
+ [epoch] 48/100000    [epoch_step] 2/12     [train_step] 578     [loss] 1.000160     [scale_loss] 128.020493     [lr] 0.000200     [t] [ 815 1239 1194  329  150  469  911  195]
+ [epoch] 48/100000    [epoch_step] 4/12     [train_step] 580     [loss] 1.000404     [scale_loss] 128.051758     [lr] 0.000200     [t] [1471 1770  184  373 1465 1190  343  742]
+ [epoch] 48/100000    [epoch_step] 6/12     [train_step] 582     [loss] 1.001529     [scale_loss] 128.195770     [lr] 0.000200     [t] [ 600  716 1704  463 1366 1787 1469  709]
+ [epoch] 48/100000    [epoch_step] 8/12     [train_step] 584     [loss] 0.997623     [scale_loss] 127.695694     [lr] 0.000200     [t] [1290 1101 1617 1943 1139  118  666 1860]
+ [epoch] 48/100000    [epoch_step] 10/12     [train_step] 586     [loss] 0.999096     [scale_loss] 127.884293     [lr] 0.000200     [t] [650 132 916  34 362 961 647 667]
+
+ [epoch] 49/100000    [epoch_step] 0/12     [train_step] 588     [loss] 0.999063     [scale_loss] 127.880028     [lr] 0.000200     [t] [ 786 1151 1922 1190  853 1349 1256 1068]
+ [epoch] 49/100000    [epoch_step] 2/12     [train_step] 590     [loss] 0.999210     [scale_loss] 127.898926     [lr] 0.000200     [t] [ 285 1148  551  185 1245  688  953 1066]
+ [epoch] 49/100000    [epoch_step] 4/12     [train_step] 592     [loss] 0.998949     [scale_loss] 127.865524     [lr] 0.000200     [t] [1173  580 1074  397 1429  946 1387 1018]
+ [epoch] 49/100000    [epoch_step] 6/12     [train_step] 594     [loss] 1.000491     [scale_loss] 128.062805     [lr] 0.000200     [t] [ 942  707  385 1239 1652  811 1167  859]
+ [epoch] 49/100000    [epoch_step] 8/12     [train_step] 596     [loss] 1.001426     [scale_loss] 128.182571     [lr] 0.000200     [t] [ 408  325 1449  775 1162  386 1496 1851]
+ [epoch] 49/100000    [epoch_step] 10/12     [train_step] 598     [loss] 1.000669     [scale_loss] 128.085663     [lr] 0.000200     [t] [1259  328 1823  685 1857 1066 1813  689]
+
+ [epoch] 50/100000    [epoch_step] 0/12     [train_step] 600     [loss] 1.000822     [scale_loss] 128.105164     [lr] 0.000200     [t] [1030 1098  296   60 1880 1902  172 1661]
+ [epoch] 50/100000    [epoch_step] 2/12     [train_step] 602     [loss] 1.000272     [scale_loss] 128.034760     [lr] 0.000200     [t] [ 615  120  774  634 1274 1817 1779  658]
+ [epoch] 50/100000    [epoch_step] 4/12     [train_step] 604     [loss] 0.998886     [scale_loss] 127.857346     [lr] 0.000200     [t] [  95 1995  688  896  787  157   18  356]
+ [epoch] 50/100000    [epoch_step] 6/12     [train_step] 606     [loss] 0.997688     [scale_loss] 127.704033     [lr] 0.000200     [t] [1911 1648  213 1843  632  915 1067  770]
+ [epoch] 50/100000    [epoch_step] 8/12     [train_step] 608     [loss] 0.999827     [scale_loss] 127.977844     [lr] 0.000200     [t] [ 760 1230 1584 1985 1774   93  806 1002]
+ [epoch] 50/100000    [epoch_step] 10/12     [train_step] 610     [loss] 0.999739     [scale_loss] 127.966606     [lr] 0.000200     [t] [ 833 1904 1831 1722  306 1733 1644 1404]
+
+ [epoch] 51/100000    [epoch_step] 0/12     [train_step] 612     [loss] 0.999659     [scale_loss] 127.956383     [lr] 0.000200     [t] [ 853  611  592 1399  123  193 1018  673]
+ [epoch] 51/100000    [epoch_step] 2/12     [train_step] 614     [loss] 1.001297     [scale_loss] 128.165955     [lr] 0.000200     [t] [1999  950 1455  965 1213 1246  358  819]
