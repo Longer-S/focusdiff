@@ -1,0 +1,111 @@
+time: 20240703_195631 
+using 524 images for train  
+
+config:  
+{
+    "name": "FusionDiff",
+    "hyperParameter": {
+        "epochs": 100000,
+        "start_epoch": 0,
+        "loss_step": 2,
+        "save_model_epoch_step": 5000
+    },
+    "dataset": {
+        "train": {
+            "path": "C:/Users/10528/Desktop/FocusDiff/Dataset/Multi-Focus-Images/train/NYU-D-100",
+            "phase": "train",
+            "batch_size": 2,
+            "shuffle": true,
+            "drop_last": true,
+            "use_dataTransform": true,
+            "resize": true,
+            "imgSize": 256
+        },
+        "valid": {
+            "dataset_name": "MFFW",
+            "path": "C:/Users/10528/Desktop/FocusDiff/Dataset/Multi-Focus-Images/valid/MFFW",
+            "phase": "valid",
+            "batch_size": 1,
+            "shuffle": false,
+            "drop_last": false,
+            "use_dataTransform": true,
+            "resize": false,
+            "imgSize": -1,
+            "generat_imgs_num": 1
+        }
+    },
+    "diffusion_model": {
+        "T": 10,
+        "beta_schedule_type": "cosine",
+        "add_noise": false,
+        "loss_scale": 128
+    },
+    "Condition_Noise_Predictor": {
+        "use_preTrain_model": false,
+        "preTrain_Model_path": "",
+        "concat_type": "ABX",
+        "UNet": {
+            "in_channels": 3,
+            "out_channels": 3,
+            "model_channels": 32,
+            "num_res_blocks": 2,
+            "dropout": 0.1,
+            "time_embed_dim_mult": 4,
+            "down_sample_mult": [
+                1,
+                2,
+                4,
+                8
+            ]
+        }
+    },
+    "optimizer": {
+        "init_lr": 0.0002,
+        "use_lr_scheduler": true,
+        "StepLR_size": 1000,
+        "StepLR_gamma": 0.99
+    }
+}
+ learningRate_scheduler = lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.99)  
+
+ [epoch] 0/100000    [epoch_step] 0/262     [train_step] 0     [loss] 0.984659     [scale_loss] 126.036339     [pre_loss] 94.148560     [lr] 0.000200     [t] [3 4]
+ [epoch] 0/100000    [epoch_step] 2/262     [train_step] 2     [loss] 0.955607     [scale_loss] 122.317680     [pre_loss] 57.991516     [lr] 0.000200     [t] [6 8]
+ [epoch] 0/100000    [epoch_step] 4/262     [train_step] 4     [loss] 0.968133     [scale_loss] 123.921021     [pre_loss] 83.102676     [lr] 0.000200     [t] [6 9]
+ [epoch] 0/100000    [epoch_step] 6/262     [train_step] 6     [loss] 0.971320     [scale_loss] 124.328911     [pre_loss] 36.870422     [lr] 0.000200     [t] [6 9]
+ [epoch] 0/100000    [epoch_step] 8/262     [train_step] 8     [loss] 0.991376     [scale_loss] 126.896179     [pre_loss] 35.945068     [lr] 0.000200     [t] [9 1]
+ [epoch] 0/100000    [epoch_step] 10/262     [train_step] 10     [loss] 0.975334     [scale_loss] 124.842796     [pre_loss] 38.041382     [lr] 0.000200     [t] [6 1]
+ [epoch] 0/100000    [epoch_step] 12/262     [train_step] 12     [loss] 0.943875     [scale_loss] 120.816055     [pre_loss] 97.978882     [lr] 0.000200     [t] [6 5]
+ [epoch] 0/100000    [epoch_step] 14/262     [train_step] 14     [loss] 0.945231     [scale_loss] 120.989586     [pre_loss] 45.018566     [lr] 0.000200     [t] [1 8]
+ [epoch] 0/100000    [epoch_step] 16/262     [train_step] 16     [loss] 0.923873     [scale_loss] 118.255760     [pre_loss] 26.123363     [lr] 0.000200     [t] [2 7]
+ [epoch] 0/100000    [epoch_step] 18/262     [train_step] 18     [loss] 0.943560     [scale_loss] 120.775696     [pre_loss] 48.227509     [lr] 0.000200     [t] [5 1]
+ [epoch] 0/100000    [epoch_step] 20/262     [train_step] 20     [loss] 0.939176     [scale_loss] 120.214478     [pre_loss] 30.868147     [lr] 0.000200     [t] [2 2]
+ [epoch] 0/100000    [epoch_step] 22/262     [train_step] 22     [loss] 0.930597     [scale_loss] 119.116455     [pre_loss] 33.671677     [lr] 0.000200     [t] [1 4]
+ [epoch] 0/100000    [epoch_step] 24/262     [train_step] 24     [loss] 0.924413     [scale_loss] 118.324814     [pre_loss] 33.373528     [lr] 0.000200     [t] [5 1]
+ [epoch] 0/100000    [epoch_step] 26/262     [train_step] 26     [loss] 0.927924     [scale_loss] 118.774254     [pre_loss] 86.145111     [lr] 0.000200     [t] [0 9]
+ [epoch] 0/100000    [epoch_step] 28/262     [train_step] 28     [loss] 0.871870     [scale_loss] 111.599411     [pre_loss] 32.119942     [lr] 0.000200     [t] [4 7]
+ [epoch] 0/100000    [epoch_step] 30/262     [train_step] 30     [loss] 0.880785     [scale_loss] 112.740501     [pre_loss] 46.034531     [lr] 0.000200     [t] [2 6]
+ [epoch] 0/100000    [epoch_step] 32/262     [train_step] 32     [loss] 0.863174     [scale_loss] 110.486221     [pre_loss] 24.701666     [lr] 0.000200     [t] [3 9]
+ [epoch] 0/100000    [epoch_step] 34/262     [train_step] 34     [loss] 0.929353     [scale_loss] 118.957184     [pre_loss] 57.681225     [lr] 0.000200     [t] [1 1]
+ [epoch] 0/100000    [epoch_step] 36/262     [train_step] 36     [loss] 0.901238     [scale_loss] 115.358421     [pre_loss] 17.292755     [lr] 0.000200     [t] [8 0]
+ [epoch] 0/100000    [epoch_step] 38/262     [train_step] 38     [loss] 0.847711     [scale_loss] 108.506973     [pre_loss] 38.714149     [lr] 0.000200     [t] [8 8]
+ [epoch] 0/100000    [epoch_step] 40/262     [train_step] 40     [loss] 0.839942     [scale_loss] 107.512634     [pre_loss] 21.744915     [lr] 0.000200     [t] [5 4]
+ [epoch] 0/100000    [epoch_step] 42/262     [train_step] 42     [loss] 0.866484     [scale_loss] 110.909927     [pre_loss] 16.789864     [lr] 0.000200     [t] [1 9]
+ [epoch] 0/100000    [epoch_step] 44/262     [train_step] 44     [loss] 0.828685     [scale_loss] 106.071640     [pre_loss] 33.735378     [lr] 0.000200     [t] [5 9]
+ [epoch] 0/100000    [epoch_step] 46/262     [train_step] 46     [loss] 0.820570     [scale_loss] 105.032913     [pre_loss] 30.196218     [lr] 0.000200     [t] [7 9]
+ [epoch] 0/100000    [epoch_step] 48/262     [train_step] 48     [loss] 0.833453     [scale_loss] 106.681992     [pre_loss] 33.087250     [lr] 0.000200     [t] [2 7]
+ [epoch] 0/100000    [epoch_step] 50/262     [train_step] 50     [loss] 0.801658     [scale_loss] 102.612167     [pre_loss] 18.814026     [lr] 0.000200     [t] [4 7]
+ [epoch] 0/100000    [epoch_step] 52/262     [train_step] 52     [loss] 0.862273     [scale_loss] 110.370926     [pre_loss] 20.874870     [lr] 0.000200     [t] [2 1]
+ [epoch] 0/100000    [epoch_step] 54/262     [train_step] 54     [loss] 0.791615     [scale_loss] 101.326767     [pre_loss] 17.137205     [lr] 0.000200     [t] [8 6]
+ [epoch] 0/100000    [epoch_step] 56/262     [train_step] 56     [loss] 0.874396     [scale_loss] 111.922653     [pre_loss] 12.632738     [lr] 0.000200     [t] [8 0]
+ [epoch] 0/100000    [epoch_step] 58/262     [train_step] 58     [loss] 0.803474     [scale_loss] 102.844711     [pre_loss] 16.958996     [lr] 0.000200     [t] [2 8]
+ [epoch] 0/100000    [epoch_step] 60/262     [train_step] 60     [loss] 0.847780     [scale_loss] 108.515823     [pre_loss] 27.700994     [lr] 0.000200     [t] [1 6]
+ [epoch] 0/100000    [epoch_step] 62/262     [train_step] 62     [loss] 0.770835     [scale_loss] 98.666893     [pre_loss] 12.613705     [lr] 0.000200     [t] [5 6]
+ [epoch] 0/100000    [epoch_step] 64/262     [train_step] 64     [loss] 0.906665     [scale_loss] 116.053062     [pre_loss] 10.738872     [lr] 0.000200     [t] [0 1]
+ [epoch] 0/100000    [epoch_step] 66/262     [train_step] 66     [loss] 0.858309     [scale_loss] 109.863510     [pre_loss] 9.259290     [lr] 0.000200     [t] [4 0]
+ [epoch] 0/100000    [epoch_step] 68/262     [train_step] 68     [loss] 0.798883     [scale_loss] 102.257011     [pre_loss] 18.491571     [lr] 0.000200     [t] [8 1]
+ [epoch] 0/100000    [epoch_step] 70/262     [train_step] 70     [loss] 0.749987     [scale_loss] 95.998375     [pre_loss] 6.315399     [lr] 0.000200     [t] [7 7]
+ [epoch] 0/100000    [epoch_step] 72/262     [train_step] 72     [loss] 0.866266     [scale_loss] 110.882080     [pre_loss] 11.577225     [lr] 0.000200     [t] [0 2]
+ [epoch] 0/100000    [epoch_step] 74/262     [train_step] 74     [loss] 0.852015     [scale_loss] 109.057953     [pre_loss] 7.442253     [lr] 0.000200     [t] [2 0]
+ [epoch] 0/100000    [epoch_step] 76/262     [train_step] 76     [loss] 0.747440     [scale_loss] 95.672333     [pre_loss] 10.871113     [lr] 0.000200     [t] [8 6]
+ [epoch] 0/100000    [epoch_step] 78/262     [train_step] 78     [loss] 0.772310     [scale_loss] 98.855713     [pre_loss] 25.325718     [lr] 0.000200     [t] [4 2]
+ [epoch] 0/100000    [epoch_step] 80/262     [train_step] 80     [loss] 0.753955     [scale_loss] 96.506271     [pre_loss] 5.131578     [lr] 0.000200     [t] [2 7]

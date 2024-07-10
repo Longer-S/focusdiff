@@ -9,7 +9,7 @@ from dataset import NYUDataset
 from Diffusion import GaussianDiffusion
 from Condition_Noise_Predictor.UNet import NoisePred
 from utils import tensorboard_writer, logger, save_model
-
+import torch.nn as nn
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
@@ -31,7 +31,7 @@ def train(config_path):
     # train_dataset = MFI_Dataset(train_datasePath, phase=train_phase, use_dataTransform=train_use_dataTransform,
     #                             resize=train_resize, imgSzie=train_imgSize)
     train_dataset=NYUDataset(root_dir='./data/NYUv2', split='train', shuffle=False, img_num=3, visible_img=1, focus_dist=[0.1,.15,.3,0.7,1.5], recon_all=True, 
-                    RGBFD=False, DPT=True, AIF=False, scale=1, norm=True, near=0.1, far=1., trans=False, resize=256)
+                    RGBFD=False, DPT=True, AIF=False, scale=2, norm=True, near=0.1, far=1., trans=False, resize=256)
     # You can modify the "num_workers" parameter for different GPU devices
     train_dataloader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=train_shuffle,
                                   drop_last=train_drop_last,pin_memory=True)
@@ -46,7 +46,11 @@ def train(config_path):
     down_sample_mult = config["Condition_Noise_Predictor"]["UNet"]["down_sample_mult"]
     model = NoisePred(in_channels, out_channels, model_channels, num_res_blocks, dropout, time_embed_dim_mult,
                       down_sample_mult)
-
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # dim = 0 [32, xxx] -> [8, ...], [8, ...], [8, ...] on 4 GPUs
+        # 使用 DataParallel 把模型包装起来
+        model = nn.DataParallel(model)
     # whether to use the pre-training model
     use_preTrain_model = config["Condition_Noise_Predictor"]["use_preTrain_model"]
     if use_preTrain_model:
@@ -109,10 +113,10 @@ def train(config_path):
             train_stackImg=train_images['output'].to(device)
             train_depth=train_images['dpt'].to(device)
             t = torch.randint(0, T, (train_batch_size,), device=device).long()
-            scale_loss = diffusion.train_losses(model, train_stackImg, train_depth, t, concat_type, loss_scale)
+            scale_loss,const_loss = diffusion.train_losses(model, train_stackImg, train_depth, t, concat_type, loss_scale)
 
             writer.add_scalar('loss_step: ', scale_loss, num_train_step)
-
+            writer.add_scalar('const_step: ', const_loss, num_train_step)
             if train_step % loss_step == 0:
                 print(
                     f" [epoch] {epoch}/{epochs}    "
@@ -120,6 +124,10 @@ def train(config_path):
                     f"[train_step] {num_train_step}     "
                     f"[loss] {scale_loss.item() / loss_scale :.6f}     "
                     f"[scale_loss] {scale_loss.item() :.6f}     "
+
+                    f"[const_loss] {const_loss.item() / loss_scale :.6f}     "
+                    f"[scale_const_loss] {const_loss.item() :.6f}     "
+
                     f"[lr] {optimizer.state_dict()['param_groups'][0]['lr'] :.6f}     "
                     f"[t] {t.cpu().numpy()}")
 
@@ -131,7 +139,7 @@ def train(config_path):
                           f"[lr] {optimizer.state_dict()['param_groups'][0]['lr'] :.6f}     "
                           f"[t] {t.cpu().numpy()}"
                           f"\n")
-
+            scale_loss=scale_loss+const_loss
             scale_loss.backward()
             optimizer.step()
 
@@ -140,7 +148,7 @@ def train(config_path):
 
         aver_loss = loss_sum / train_step_sum
 
-        if epoch % 50 == 0:
+        if epoch % 20 == 0:
             save_model(model, epoch, timestr)
         if epoch == epochs - 1:
             save_model(model, epoch, timestr)

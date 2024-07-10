@@ -9,7 +9,7 @@
   "dataset": {
       "train": { "path":"C:/Users/10528/Desktop/FocusDiff/Dataset/Multi-Focus-Images/train/NYU-D-100",
                 "phase": "train",
-                "batch_size": 32,
+                "batch_size": 2,
                 "shuffle": true,
                 "drop_last": true,
                 "use_dataTransform": true,

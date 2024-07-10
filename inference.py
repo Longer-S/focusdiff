@@ -78,7 +78,7 @@ def valid(config_path, model_path, timestr):
 
 
 if __name__ == '__main__':
-    model_path = "weight/20240701_003515/epoch_3300.pt"
+    model_path = "weight/20240705_175625/epoch_50.pt"
     timestr = time.strftime('%Y%m%d_%H%M%S')
     print(f"time: {timestr}")
     config_path = "config.json"

@@ -7,7 +7,7 @@ from torch.utils.tensorboard.writer import SummaryWriter
 
 # 将tensor转换为img
 def tensor2img(img):
-    assert len(img) == 3
+    # assert len(img) == 3
     reverse_transforms = transforms.Compose([
         transforms.Lambda(lambda t: (t + 1) / 2),
         transforms.Lambda(lambda t: t.permute(1, 2, 0)),  # CHW to HWC
@@ -42,3 +42,4 @@ def save_model(model, epoch,timestr):
     ckpt_name = "epoch_" + str(epoch) + ".pt"
     ckpt_path = os.path.join(dir_path, ckpt_name)
     torch.save(model.state_dict(), ckpt_path)
+    
