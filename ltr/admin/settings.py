@@ -8,7 +8,7 @@ class Settings:
         # Most common settings are assigned in the settings struct
         self.device = 'cuda'
         self.description = 'STFNet with default settings.'
-        self.batch_size = 2
+        self.batch_size = 1
         self.num_workers = 4
         self.multi_gpu = False
         self.print_interval = 1

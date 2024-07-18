@@ -5,7 +5,7 @@ import os
 import time
 import torch
 from torch.utils.data import DataLoader
-from dataset import NYUDataset
+from dataset import NYUDataset,DefocusNet
 # from dataset import MFI_Dataset
 from Diffusion import GaussianDiffusion
 from Condition_Noise_Predictor.UNet import NoisePred
@@ -41,8 +41,12 @@ def valid(config_path, model_path, timestr):
     valid_drop_last = config["dataset"]["valid"]["drop_last"]
     # valid_dataset = MFI_Dataset(valid_datasePath, phase=valid_phase, use_dataTransform=valid_use_dataTransform,
     #                             resize=1, imgSzie=valid_imgSize)
-    valid_dataset=NYUDataset(root_dir='./data/NYUv2', split='train', shuffle=False, img_num=3, visible_img=1, focus_dist=[0.1,.15,.3,0.7,1.5], recon_all=True, 
-                    RGBFD=False, DPT=True, AIF=False, scale=2, norm=True, near=0.1, far=1., trans=False, resize=256)
+    valid_dataset=DefocusNet(root_dir='./data/DefocusNet/test', split='test', shuffle=False, img_num=5, 
+                             visible_img=1, focus_dist=[0.1,.15,.3,0.7,1.5], recon_all=True, 
+                    RGBFD=False, DPT=True, AIF=False, norm=False, near=0.1, far=1., scale=1)
+    
+    # valid_dataset=NYUDataset(root_dir='./data/NYUv2', split='train', shuffle=False, img_num=3, visible_img=1, focus_dist=[0.1,.15,.3,0.7,1.5], recon_all=True, 
+    #                 RGBFD=False, DPT=True, AIF=False, scale=2, norm=True, near=0.1, far=1., trans=False, resize=256)
     valid_dataloader = DataLoader(valid_dataset, batch_size=valid_batch_size, shuffle=valid_shuffle,
                                   drop_last=valid_drop_last)
     assert len(valid_dataset) % valid_batch_size == 0, "please reset valid_batch_size"
@@ -59,7 +63,8 @@ def valid(config_path, model_path, timestr):
     down_sample_mult = config["Condition_Noise_Predictor"]["UNet"]["down_sample_mult"]
     model = NoisePred(in_channels, out_channels, model_channels, num_res_blocks, dropout, time_embed_dim_mult,
                       down_sample_mult)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+
+    model.load_state_dict(torch.load(model_path, map_location=device),strict=False)
     model.to(device)
     model_name = get_model_name(model_path)
     concat_type = config["Condition_Noise_Predictor"]["concat_type"]
@@ -78,7 +83,7 @@ def valid(config_path, model_path, timestr):
 
 
 if __name__ == '__main__':
-    model_path = "weight/20240705_175625/epoch_50.pt"
+    model_path = "weight/20240717_152213/epoch_350.pt"
     timestr = time.strftime('%Y%m%d_%H%M%S')
     print(f"time: {timestr}")
     config_path = "config.json"

@@ -144,7 +144,7 @@ class EvalRecon(nn.Module):
         _ssim = self.ssim(recon, target)
         _mse = self.mse(recon, target)
         _sharp = self.sharp(recon, target)
-        return _psnr.item(), _ssim.item(), _mse.item(), _sharp.item()
+        return _psnr, _ssim, _mse, _sharp
 
 class Smoothness(nn.Module):
     def __init__(self, beta=1.):

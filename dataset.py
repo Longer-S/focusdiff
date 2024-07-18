@@ -58,7 +58,6 @@ class NYUDataset(Dataset):
 
     def __getitem__(self, idx):
         img_idx = idx *5
-
         sub_idx = np.arange(self.img_num)
         if self.shuffle:
             np.random.shuffle(sub_idx)
@@ -87,9 +86,97 @@ class NYUDataset(Dataset):
             img_dpt = torch.from_numpy(img_dpt).unsqueeze(0)
             if self.transform is not None:
                 img_dpt = self.transform(img_dpt)
-            mat_dpt = img_dpt.repeat(3, 1, 1)
-            data.update(dpt = mat_dpt)
+            # mat_dpt = img_dpt.repeat(3, 1, 1)
+            data.update(dpt = img_dpt)
 
 
         return data
 
+class DefocusNet(Dataset):
+    def __init__(self, root_dir, split='train', shuffle=False, img_num=5, visible_img=1, focus_dist=[0.1,.15,.3,0.7,1.5], recon_all=True, 
+                    RGBFD=True, DPT=False, AIF=False, norm=False, near=0.1, far=1., scale=1):
+        self.root_dir = root_dir
+        self.shuffle = shuffle
+        self.img_num = img_num
+        self.visible_img = visible_img
+        self.focus_dist = torch.Tensor(focus_dist)
+        self.recon_all = recon_all
+        self.RGBFD = RGBFD
+        self.DPT = DPT
+        self.AIF = AIF
+        self.norm = norm
+        self.near = near
+        self.far = far
+        self.scale=scale
+        ##### Load and sort all images
+        self.imglist_all = [f for f in os.listdir(self.root_dir) if os.path.isfile(os.path.join(self.root_dir, f)) and f[-7:] == "All.png"]
+        self.imglist_aif = [f for f in os.listdir(self.root_dir) if os.path.isfile(os.path.join(self.root_dir, f)) and f[-7:] == "Aif.png"]
+        self.imglist_dpt = [f for f in os.listdir(self.root_dir) if os.path.isfile(os.path.join(self.root_dir, f)) and f[-7:] == "Dpt.npy"]
+
+        self.n_stack = len(self.imglist_dpt)
+        if split == 'train':
+            print(f"{self.visible_img} out of {self.img_num} images per sample are visible for input")
+        self.imglist_all.sort()
+        self.imglist_aif.sort()
+        self.imglist_dpt.sort()
+        if scale != 1:
+            self.transform = T.Resize((256//scale, 256//scale))
+        else:
+            self.transform = None
+
+    def __len__(self):
+        return self.n_stack
+
+    def __getitem__(self, idx):
+        img_idx = idx * self.img_num
+
+        sub_idx = np.arange(self.img_num)
+        if self.shuffle:
+            np.random.shuffle(sub_idx)
+        input_idx = sub_idx[:self.visible_img]
+        if self.recon_all:
+            output_idx = sub_idx
+        else:
+            output_idx = sub_idx[self.visible_img:]
+
+        mats_input = []
+        mats_output = []
+
+        for i in sub_idx:
+            img_all = Image.open(os.path.join(self.root_dir, self.imglist_all[img_idx + i]))
+            img_all = np.asarray(img_all, dtype=np.float32) / 255.
+            mat_all = torch.from_numpy(img_all.copy().transpose((2, 0, 1)))
+            if self.transform is not None:
+                mat_all = self.transform(mat_all)
+            if i in output_idx:    
+                mats_output.append(mat_all.unsqueeze(0))
+            if self.RGBFD and i in input_idx:   
+                mat_fd = self.focus_dist[i].view(-1, 1, 1).expand(1, *mat_all.shape[1:])
+                mat_all = torch.cat([mat_all, mat_fd], dim=0)                 
+                mats_input.append(mat_all.unsqueeze(0))
+        data = dict(output=torch.cat(mats_output), output_fd=self.focus_dist[output_idx])
+
+        if self.RGBFD:
+            data.update(rgb_fd = torch.cat(mats_input))
+
+        if self.DPT:
+            with open (os.path.join(self.root_dir, self.imglist_dpt[idx]), 'rb') as f:
+                img_dpt = np.load(f).astype(np.float32) 
+            img_dpt = np.clip(img_dpt, self.near, self.far) 
+            img_dpt = torch.from_numpy(img_dpt.copy().transpose(2, 0, 1))
+            mat_dpt = img_dpt
+            data.update(dpt = mat_dpt)
+
+        if self.AIF:
+            assert self.imglist_aif is not None
+            im = Image.open(os.path.join(self.root_dir, self.imglist_aif[idx]))
+            # H, W, C = im.shape
+            # im = cv2.resize(im, (W//self.scale, H//self.scale))/255.
+            img_aif = np.asarray(im, dtype=np.float32) / 255.
+            mat_aif = img_aif.copy()
+            mat_aif = torch.from_numpy(mat_aif.transpose(2, 0, 1))
+            if self.transform is not None:
+                mat_aif = self.transform(mat_aif)
+            data.update(aif = mat_aif)
+
+        return data

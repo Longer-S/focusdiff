@@ -60,12 +60,12 @@ class SKConv(nn.Module):
             self.convs.append(nn.Sequential(
                 nn.Conv2d(features, features, kernel_size=3, stride=stride, padding=1+i, dilation=1+i, groups=G, bias=False),
                 group_norm(features),
-                nn.ReLU(inplace=False)
+                nn.SiLU()
             ))
         self.gap = nn.AdaptiveAvgPool2d((1,1))
         self.fc = nn.Sequential(nn.Conv2d(features, d, kernel_size=1, stride=1, bias=False),
-                                nn.BatchNorm2d(d),
-                                nn.ReLU(inplace=False))
+                                group_norm(d),
+                                nn.SiLU())
         self.fcs = nn.ModuleList([])
         for i in range(M):
             self.fcs.append(
@@ -93,6 +93,59 @@ class SKConv(nn.Module):
         feats_V = torch.sum(feats*attention_vectors, dim=1)
         
         return feats_V
+class FFParser(nn.Module):
+    def __init__(self, dim, h, w):
+        super().__init__()
+        self.complex_weight = nn.Parameter(torch.randn(dim, h, w, 2, dtype=torch.float32) * 0.02)
+        self.w = w
+        self.h = h
+
+    def forward(self, x, spatial_size=None):
+        B, C, H, W = x.shape
+        assert H == W, "height and width are not equal"
+        if spatial_size is None:
+            a = b = H
+        else:
+            a, b = spatial_size
+
+        # x = x.view(B, a, b, C)
+        x = x.to(torch.float32)
+        x = torch.fft.rfft2(x, dim=(2, 3), norm='ortho')
+        weight = torch.view_as_complex(self.complex_weight)
+        x = x * weight
+        x = torch.fft.irfft2(x, s=(H, W), dim=(2, 3), norm='ortho')
+
+        x = x.reshape(B, C, H, W)
+
+        return x
+    
+
+
+
+class LearnableGaussianBlur(nn.Module):
+    def __init__(self,dim=3,h=128,w=128,kernel_size=3, initial_sigma=1.0):
+        super(LearnableGaussianBlur, self).__init__()
+        self.kernel_size = kernel_size
+        self.sigma = nn.Parameter(torch.tensor(initial_sigma))
+        self.complex_weight = nn.Parameter(torch.randn(dim, h, w, dtype=torch.float32) * 0.02)
+
+    def forward(self, x):
+        kernel = self.create_gaussian_kernel(self.kernel_size, self.sigma)
+        kernel = kernel.expand(x.size(1), 1, self.kernel_size, self.kernel_size)
+        x = F.conv2d(x, kernel, padding=self.kernel_size // 2, groups=x.size(1))
+        weight = self.complex_weight
+        return x*weight
+
+    @staticmethod
+    def create_gaussian_kernel(kernel_size, sigma):
+        device = sigma.device
+        x = torch.arange(kernel_size, dtype=torch.float32).to(device) - kernel_size // 2
+        x = x.repeat(kernel_size, 1)
+        y = x.t()
+        kernel = torch.exp(-(x**2 + y**2) / (2 * sigma**2))
+        kernel = kernel / kernel.sum()
+        return kernel.view(1, 1, kernel_size, kernel_size)
+    
 
 # ResBlock 继承 TimeBlock
 # 所有的 ResBlock 中均包含 time_embedding，其他 layer 不包含 time_embedding
@@ -144,7 +197,6 @@ class NoiseEmbeddingModule(nn.Module):
         self.noise_embedding = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1),        
             nn.GroupNorm(4, out_channels),
-            # nn.ReLU(True)
             nn.SiLU()
         )
         # print(out_channels)
@@ -182,7 +234,22 @@ class AttentionBlock(nn.Module):
         # print("s",print(h.shape))
         h = self.proj(h)
         return h + x
-    
+
+class Fusion(nn.Sequential):
+
+    def __init__(self, input):
+        super(Fusion, self).__init__()
+        self.convA = nn.Sequential(
+            nn.Conv2d(input*2, input, kernel_size=1, stride=1, padding=1),
+            nn.GroupNorm(4,input),
+            nn.ReLU(True),
+        )
+
+    def forward(self, x, concat_with):
+        # up_x = F.interpolate(x, size=[concat_with.size(2), concat_with.size(3)], mode='bilinear', align_corners=True)
+        return self.convA(torch.cat([x, concat_with], dim=1))
+
+
 class NoisePred(nn.Module):
     def __init__(self,
                  in_channels,
@@ -223,7 +290,7 @@ class NoisePred(nn.Module):
 
         # 初始卷积层
         self.inBlock = nn.Conv2d(in_channels, model_channels, kernel_size=3, padding=1)
-        self.out_nosie = nn.Conv2d(3, 32, kernel_size=1, stride=1, padding=0)
+
         # 下采样
         # 共四个才采样块，每个下采样块包括两个包含 time_embed 的 ResBlock 和一个不包含 time_embed 的 DownSample 块
         self.downBlock = nn.ModuleList()
@@ -294,11 +361,15 @@ class NoisePred(nn.Module):
         # self.fc_weights = nn.ModuleList([nn.Linear(C, 1) for C in [4,2]])
         # print("a")
 
+        self.fusion = nn.ModuleList()
         self.noise_downBlock = nn.ModuleList()
+        self.ffparser=nn.ModuleList()
+        self.gaussian_Blur=nn.ModuleList()
 
-        self.noise_downBlock.append(TimeSequential(nn.Conv2d(in_channels, model_channels, kernel_size=3, padding=1)))            
+        self.noise_downBlock.append(TimeSequential(nn.Conv2d(1, model_channels, kernel_size=3, padding=1)))            
 
         down_init_channel = model_channels
+        self.out_nosie = nn.Conv2d(1, 32, kernel_size=1, stride=1, padding=0)
         ds = 1
         for level, channel in enumerate(down_channels):
             for i in range(num_res_blocks):
@@ -314,11 +385,16 @@ class NoisePred(nn.Module):
                 if ds in [8,16]:
                     layer1.append(AttentionBlock(down_init_channel, num_heads=4))
                 self.noise_downBlock.append(TimeSequential(*layer1))
+            # self.gaussian_Blur.append(LearnableGaussianBlur(channel, 256 // (2 **(level+1)), 256 // (2 **(level+1)),kernel_size=3, initial_sigma=1.0))
+            self.ffparser.append(FFParser(channel, 256*2 // (2 **(level+1)), 256*2 // (2 **(level+2))+1))
+            self.fusion.append(Fusion(channel))
             # 最后一步不做下采样
             if level != len(down_sample_mult) - 1:
                 down_layer = Downsample(channels=channel)
                 self.noise_downBlock.append(TimeSequential(down_layer))
                 ds *= 2
+        # self.gaussian_Blur=nn.ModuleList(self.gaussian_Blur)
+        
         self.sknet=SKConv(features=256,M=2, G=32, r=16, stride=1, L=32)
 
     
@@ -326,7 +402,6 @@ class NoisePred(nn.Module):
 
         # y_e = y[:, 0:1, :, :].unsqueeze(1).expand(-1, x.shape[1],-1, -1, -1)
         # x = torch.cat((x, y_e), dim=2)
-
         B, FS, C, H, W = x.shape
         n_x = x.view(B*FS, C, H, W) # BxFS C H W
 
@@ -341,7 +416,8 @@ class NoisePred(nn.Module):
         for down_block in self.noise_downBlock:
             n1 = down_block(n1, time_emb)
             if num_down in [3,6,9,12]:
-                h_n1.append(n1)
+                # h_n1.append(self.gaussian_Blur[num_down//3-1](n1))
+                h_n1.append(self.ffparser[num_down//3-1](n1))
             num_down += 1          
 
         # 用于存放每个下采样步骤的输出
@@ -368,8 +444,9 @@ class NoisePred(nn.Module):
             #add
             elif(num_down in [1,4,7,10]):
                 th = h.view(B, FS, *h.shape[-3:])   
-                h=h+h_n1.pop(0).unsqueeze(1).expand_as(th).contiguous().view(B*FS, *h.shape[-3:])
-
+                # new=torch.cat([h, h_n1.pop(0).unsqueeze(1).expand_as(th).contiguous().view(B*FS, *h.shape[-3:])], dim=1)
+                # h=h+h_n1.pop(0).unsqueeze(1).expand_as(th).contiguous().view(B*FS, *h.shape[-3:])
+                self.fusion[num_down//3](h,h_n1.pop(0).unsqueeze(1).expand_as(th).contiguous().view(B*FS, *h.shape[-3:]))
             num_down += 1
 
         # middle stage
@@ -381,6 +458,7 @@ class NoisePred(nn.Module):
         h = h + res.pop()
         # assert len(res) == len(self.upBlock_chanNum_cumsum)
         
+
         h=self.sknet(h)
 
 
@@ -401,22 +479,22 @@ class NoisePred(nn.Module):
         # h = torch.cat([h, h], dim=1)
 
 
-        # 5th layer's transformer 16 * 16
-        if not isinstance(n1, NestedTensor):
-            noisy_f_nest = nested_tensor_from_tensor(n1)
-        if not isinstance(h, NestedTensor):
-            h_nest = nested_tensor_from_tensor(h)
+        # # 5th layer's transformer 16 * 16
+        # if not isinstance(n1, NestedTensor):
+        #     noisy_f_nest = nested_tensor_from_tensor(n1)
+        # if not isinstance(h, NestedTensor):
+        #     h_nest = nested_tensor_from_tensor(h)
 
-        feat_ir5, mask_ir5 = noisy_f_nest.decompose()
-        feat_vis5, mask_vis5 = h_nest.decompose()
+        # feat_ir5, mask_ir5 = noisy_f_nest.decompose()
+        # feat_vis5, mask_vis5 = h_nest.decompose()
 
-        pos_ir5 = self.pos_encoding5(noisy_f_nest)
-        pos_vis5 = self.pos_encoding5(h_nest)
+        # pos_ir5 = self.pos_encoding5(noisy_f_nest)
+        # pos_vis5 = self.pos_encoding5(h_nest)
 
-        hs5 = self.featurefusion_network5(feat_ir5, mask_ir5, feat_vis5, mask_vis5, pos_ir5, pos_vis5)
+        # hs5 = self.featurefusion_network5(feat_ir5, mask_ir5, feat_vis5, mask_vis5, pos_ir5, pos_vis5)
 
-        h = hs5.contiguous().view(int(self.setting.batch_size), feat_ir5.shape[2],
-                                            feat_ir5.shape[3], -1).permute(0, 3, 2, 1)  #推理的时候self.setting.batch_size设置为1
+        # h = hs5.contiguous().view(int(self.setting.batch_size), feat_ir5.shape[2],
+        #                                     feat_ir5.shape[3], -1).permute(0, 3, 2, 1)  #推理的时候self.setting.batch_size设置为1
 
         
 
@@ -432,6 +510,7 @@ class NoisePred(nn.Module):
             if num_up in self.upBlock_chanNum_cumsum:  # [2,5,8]
                 h = up_block(h, time_emb)
                 h_crop = h[:, :, :res[-1].shape[2], :res[-1].shape[3]]
+                # h = h_crop + res.pop()+F.interpolate(h_n1.pop(-2), size=[h_crop.size(2), h_crop.size(3)], mode='bilinear', align_corners=True)
                 h = h_crop + res.pop()
             else:
                 h = up_block(h, time_emb)
@@ -448,4 +527,4 @@ if __name__ == '__main__':
 
     net=NoisePred(3,3,32,2,0.1,4,[1, 2, 4, 8]) #不变 只需该batchsize
     torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    print(net(torch.randn(2,2,3,128,128),torch.randn(2,3,128,128),torch.randint(0, 100, (2,)).long()))
+    print(net(torch.randn(2,2,3,128,128),torch.randn(2,1,128,128),torch.randint(0, 100, (2,)).long()))

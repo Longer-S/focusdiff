@@ -5,11 +5,12 @@ import math
 import torch.nn.functional as F
 import os
 import cv2
+# os.environ["CUDA_VISIBLE_DEVICES"]="2,3"
 import time
 import numpy as np
 from utils import tensor2img
 from util.loss import *
-
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 def linear_beta_schedule(timesteps):
     scale = 1000 / timesteps
     beta_start = scale * 0.0001
@@ -137,7 +138,7 @@ class GaussianDiffusion:
         return model_mean, posterior_variance, posterior_log_variance
 
     # denoise_step: sample x_{t-1} from x_t and pred_noise
-    # @torch.no_grad()
+    @torch.no_grad()
     def p_sample(self, model, sourceImg1, x_t, t, concat_type, add_noise, clip_denoised=True):
         # predict mean and variance
         model_mean, _, model_log_variance = self.p_mean_variance(
@@ -155,14 +156,14 @@ class GaussianDiffusion:
             return model_mean
 
     # denoise: reverse diffusion
-    # @torch.no_grad()
+    @torch.no_grad()
     def p_sample_loop(self, model, sourceImg1, concat_type, add_noise, log_info,split="test"):
-        if split=='test':
-            step, valid_step_sum, num, generat_imgs_num = log_info
+        
+        step, valid_step_sum, num, generat_imgs_num = log_info
         log_step = 100
 
         # Start from pure noise (for each example in the batch)
-        imgs = torch.randn(sourceImg1[0][0].shape, device=device).unsqueeze(0)
+        imgs = torch.randn(sourceImg1[0][0][0].unsqueeze(0).shape, device=device).unsqueeze(0)
 
         # reverse process
         for i in reversed(range(0, self.timesteps)):
@@ -178,13 +179,15 @@ class GaussianDiffusion:
         return imgs
 
     # Sample new images
-    # @torch.no_grad()
+    @torch.no_grad()
     def sample(self, model, sourceImg1, add_noise, concat_type, model_name, model_path,
                generat_imgs_num, step, timestr, valid_step_sum, dataset_name):
         extension_list = ["jpg", "tif", "png", "jpeg"]
         for num in range(generat_imgs_num):
             log_info = [step, valid_step_sum, num, generat_imgs_num]
             imgs = self.p_sample_loop(model, sourceImg1, concat_type, add_noise, log_info)
+            # imgs=self.ddim_sample(model,sourceImg1,sourceImg1.shape[-1],batch_size=1,channels=1,ddim_timesteps=100,ddim_discr_method="uniform",ddim_eta=0.0,clip_denoised=True)
+
             for i in range(imgs.shape[0]):
                 img_id = step + i
                 dirPath = os.path.join("generate_imgs",
@@ -283,9 +286,9 @@ class GaussianDiffusion:
             pred_dir_xt = torch.sqrt(1 - alpha_cumprod_t_prev - sigmas_t**2) * pred_noise
             
             # 6. compute x_{t-1} of formula (12)
-            # x_prev = torch.sqrt(alpha_cumprod_t_prev) * pred_x0 + pred_dir_xt + sigmas_t * torch.randn_like(sample_img)  #去掉随机噪声
-            x_prev = torch.sqrt(alpha_cumprod_t_prev) * pred_x0 + pred_dir_xt
+            x_prev = torch.sqrt(alpha_cumprod_t_prev) * pred_x0 + pred_dir_xt+ sigmas_t * torch.randn_like(sample_img)#去掉随机噪声
             sample_img = x_prev
+            print("output",i)
             
         return sample_img
 
@@ -293,11 +296,11 @@ class GaussianDiffusion:
     def train_losses(self, model, stack_img, x_start, t, concat_type, loss_scale):
 
 
-        pre_img=self.ddim_sample(model,stack_img,stack_img.shape[-1],batch_size=stack_img.shape[0],channels=3,ddim_timesteps=50,ddim_discr_method="uniform",ddim_eta=0.0,clip_denoised=True)
+        # pre_img=self.ddim_sample(model,stack_img,stack_img.shape[-1],batch_size=stack_img.shape[0],channels=3,ddim_timesteps=50,ddim_discr_method="uniform",ddim_eta=0.0,clip_denoised=True)
 
         noise = torch.randn_like(x_start)
         # Get x_t
-        x_noisy = self.q_sample(pre_img, t, noise=noise) #x_start改为pre_img
+        x_noisy = self.q_sample(x_start, t, noise=noise) #x_start改为pre_img
         
         # Concatenation is performed in the channel dimension
         # if concat_type == "ABX":
@@ -309,8 +312,9 @@ class GaussianDiffusion:
         predicted_noise = model(stack_img,x_noisy, t)
 
         # pre_img=self.p_sample_loop(model, stack_img, concat_type, add_noise=False, log_info=None,split="train")
-        pre_loss=F.mse_loss(pre_img, x_start)
-
+        # pre_loss=F.mse_loss(pre_img, x_start)
+        loss=EvalRecon(stack_img.device)
+        # _psnr, _ssim, _mse, _sharp=loss(pre_img, x_start),loss_scale * _psnr,loss_scale*(1-_ssim),loss_scale*_mse, loss_scale*_sharp
         assert predicted_noise.shape == noise.shape
 
-        return loss_scale * F.mse_loss(noise, predicted_noise),loss_scale * pre_loss
+        return loss_scale * F.mse_loss(noise, predicted_noise),0,0,0,0
